@@ -15,3 +15,5 @@ enum MainAccount {
   damagedGoods,
   activityExpenses,
 }
+
+enum SaleingType { item, package, kg, gram }
