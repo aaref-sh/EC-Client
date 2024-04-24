@@ -10,6 +10,10 @@ class Sells extends StatefulWidget {
 class _SellsState extends State<Sells> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Container(
+      child: Column(
+        children: [],
+      ),
+    );
   }
 }
