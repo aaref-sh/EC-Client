@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:tt/models/category.dart';
 import 'package:tt/models/fund.dart';
 
@@ -7,18 +8,18 @@ class Repository {
   Repository(this.id, this.name);
 }
 
-class Sale {
+class Sell {
   int id;
   String clientName;
   DateTime dateTime;
-  List<SaleCategory> soldCategories;
+  List<SellCategory> soldCategories;
   String repository;
   String paymentType; // "USD" or "Local Pounds"
   String notes;
   bool inCash;
   Fund? fund;
 
-  Sale({
+  Sell({
     required this.id,
     required this.clientName,
     required this.dateTime,
@@ -30,6 +31,7 @@ class Sale {
     this.fund,
   });
 
+  double get totalPrice => soldCategories.map((e) => e.totalPrice).sum;
   Map<String, dynamic> toJson() => {
         'id': id,
         'clientName': clientName,
@@ -42,12 +44,12 @@ class Sale {
         'fund': fund?.toJson() ?? "",
       };
 
-  static Sale fromJson(Map<String, dynamic> json) => Sale(
+  static Sell fromJson(Map<String, dynamic> json) => Sell(
         id: json['id'],
         clientName: json['clientName'],
         dateTime: DateTime.parse(json['dateTime']),
-        soldCategories: List<SaleCategory>.from(
-            json['soldCategories'].map((x) => SaleCategory.fromJson(x))),
+        soldCategories: List<SellCategory>.from(
+            json['soldCategories'].map((x) => SellCategory.fromJson(x))),
         repository: json['repository'],
         paymentType: json['paymentType'],
         notes: json['notes'],

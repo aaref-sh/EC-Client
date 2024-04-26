@@ -12,15 +12,17 @@ class BaseRout extends StatefulWidget {
 class _BaseRoutState extends State<BaseRout> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.routeName),
-      ),
-      body: Stack(
-        children: [
-          widget.child,
-        ],
-      ),
-    );
+    return Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.routeName),
+          ),
+          body: Stack(
+            children: [
+              widget.child,
+            ],
+          ),
+        ));
   }
 }

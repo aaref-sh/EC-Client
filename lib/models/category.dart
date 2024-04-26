@@ -12,7 +12,7 @@ class Category {
   String notes;
   DateTime expireDate;
   String imagePath;
-  SaleingType saleingType;
+  SellingType saleingType;
 
   Category({
     required this.id,
@@ -51,17 +51,18 @@ class Category {
         expireDate: DateTime.parse(json['expireDate']),
         imagePath: json['imagePath'],
         saleingType:
-            SaleingType.values.firstWhere((e) => e.name == json['saleingType']),
+            SellingType.values.firstWhere((e) => e.name == json['saleingType']),
       );
 }
 
-class SaleCategory {
+class SellCategory {
   Category category;
   double amount;
   double price;
   String extraDetails;
 
-  SaleCategory({
+  double get totalPrice => price * amount;
+  SellCategory({
     required this.category,
     required this.amount,
     required this.price,
@@ -75,7 +76,7 @@ class SaleCategory {
         'extraDetails': extraDetails,
       };
 
-  static SaleCategory fromJson(Map<String, dynamic> json) => SaleCategory(
+  static SellCategory fromJson(Map<String, dynamic> json) => SellCategory(
         category: Category.fromJson(json['category']),
         amount: json['amount'],
         price: json['price'],

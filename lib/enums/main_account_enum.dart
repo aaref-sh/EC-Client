@@ -16,4 +16,4 @@ enum MainAccount {
   activityExpenses,
 }
 
-enum SaleingType { item, package, kg, gram }
+enum SellingType { item, package, kg, gram }
