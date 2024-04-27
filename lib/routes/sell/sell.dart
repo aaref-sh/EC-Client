@@ -3,6 +3,7 @@ import 'package:tt/components/base_route.dart';
 import 'package:tt/enums/main_account_enum.dart';
 import 'package:tt/helpers/functions.dart';
 import 'package:tt/helpers/resources.dart';
+import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/category.dart';
 import 'package:tt/models/category_group.dart';
 import 'package:tt/models/sell.dart';
@@ -10,36 +11,36 @@ import 'package:vtable/vtable.dart';
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 
+final items = <Sell>[
+  Sell(
+      id: 0,
+      clientName: 'طط',
+      dateTime: DateTime.now(),
+      soldCategories: [
+        SellCategory(
+            amount: 6,
+            category: Category(
+                id: 0,
+                name: "name",
+                categoryGroup: CategoryGroup(id: 1, name: "name"),
+                dateTime: DateTime.now(),
+                initialAmount: 2,
+                price: 1,
+                notes: 'notes',
+                expireDate: DateTime.now().add(Duration(days: 1)),
+                imagePath: 'imagePath',
+                saleingType: SellingType.gram),
+            price: 40000,
+            extraDetails: '')
+      ],
+      repository: 'repository',
+      paymentType: 'paymentType',
+      notes: 'notes',
+      inCash: false)
+];
+
 class Sells extends StatefulWidget {
   Sells({super.key});
-
-  final items = <Sell>[
-    Sell(
-        id: 0,
-        clientName: 'طط',
-        dateTime: DateTime.now(),
-        soldCategories: [
-          SellCategory(
-              amount: 6,
-              category: Category(
-                  id: 0,
-                  name: "name",
-                  categoryGroup: CategoryGroup(id: 1, name: "name"),
-                  dateTime: DateTime.now(),
-                  initialAmount: 2,
-                  price: 1,
-                  notes: 'notes',
-                  expireDate: DateTime.now().add(Duration(days: 1)),
-                  imagePath: 'imagePath',
-                  saleingType: SellingType.gram),
-              price: 40000,
-              extraDetails: '')
-        ],
-        repository: 'repository',
-        paymentType: 'paymentType',
-        notes: 'notes',
-        inCash: false)
-  ];
 
   @override
   State<Sells> createState() => _SellsState();
@@ -63,9 +64,9 @@ class _SellsState extends State<Sells> {
     return VTable<Sell>(
       filterWidgets: [Icon(Icons.home_outlined)],
       actions: [Icon(Icons.delete)],
-      showToolbar: false,
-      items: widget.items,
-      tableDescription: '${widget.items.length} items',
+      showToolbar: showTableHeaders,
+      items: items,
+      tableDescription: '${items.length} items',
       startsSorted: true,
       includeCopyToClipboardAction: true,
       columns: [
