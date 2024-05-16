@@ -7,7 +7,9 @@ void showDialogBox(BuildContext context, Widget widget) {
     builder: (context) {
       return AlertDialog(
           content: SizedBox(
-              height: 200, child: SingleChildScrollView(child: widget)));
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              child: SingleChildScrollView(child: widget)));
     },
   );
 }

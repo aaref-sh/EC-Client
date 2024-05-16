@@ -1,6 +1,11 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:tt/components/helper.dart';
+import 'package:tt/helpers/resources.dart';
 import 'package:tt/models/category.dart';
 import 'package:tt/models/fund.dart';
+import 'package:tt/helpers/functions.dart';
 
 class Repository {
   int id;
@@ -56,4 +61,65 @@ class Sell {
         inCash: json['inCash'],
         fund: Fund.fromJson(json['fund']),
       );
+
+  static const disabledStyle =
+      TextStyle(fontStyle: FontStyle.italic, color: Colors.grey);
+  static DateFormat formatter = DateFormat('yyyy-MM-dd');
+  static List<ColumnConfig<Sell>> columnConfigs(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
+    return [
+      ColumnConfig(
+        label: resNumber,
+        width: width * 2 / 12,
+        alignment: Alignment.center,
+        transformFunction: (row) => (row.id).toString(),
+        compareFunction: (a, b) => a.id.compareTo(b.id),
+        icon: Icons.numbers,
+      ),
+      ColumnConfig(
+        label: resDate,
+        width: width * 3.5 / 12,
+        alignment: Alignment.center,
+        transformFunction: (row) => formatter.format(row.dateTime),
+        styleFunction: (row) =>
+            row.dateTime == DateTime.now() ? disabledStyle : null,
+      ),
+      ColumnConfig(
+        label: resName,
+        width: (width * 3.5 / 12).round() - 1,
+        alignment: Alignment.center,
+        transformFunction: (row) => row.clientName,
+        compareFunction: (a, b) => a.clientName.compareTo(b.clientName),
+        // validators: [SampleRowData.validateGravity],
+      ),
+      ColumnConfig(
+        label: resAmount,
+        width: width * 3 / 12,
+        alignment: Alignment.center,
+        compareFunction: (a, b) => a.totalPrice.compareTo(b.totalPrice),
+        renderFunction: (context, object, _) {
+          var price = object.totalPrice;
+          Color? color;
+          if (object.totalPrice > 1e5) {
+            color = Colors.blue.withAlpha((price / 10000 * 255).round());
+          }
+          if (price > 5e5) {
+            color = Colors.red[900]
+                ?.toMaterialColor()
+                .withAlpha((price / 5e5 * 255).round());
+          }
+          return Container(
+            color: color,
+            child: Center(
+                child: Text(
+              price.toString(),
+              style: TextStyle(fontSize: 15),
+            )),
+          );
+        },
+        // validators: [SampleRowData.validateGravity],
+      ),
+    ];
+  }
 }

@@ -10,6 +10,8 @@ import 'package:tt/routes/purchases/add_purchase.dart';
 import 'package:tt/routes/purchases/purchases.dart';
 import 'package:tt/routes/sell/add_sell.dart';
 import 'package:tt/routes/sell/sell.dart';
+import 'package:tt/routes/voucher/add_voucher.dart';
+import 'package:tt/routes/voucher/voucher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,7 +56,12 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                MainScreenButton("sells", Icons.abc, Purchase()),
+                MainScreenButton(
+                  "السندات",
+                  Icons.payments,
+                  Vouchers(),
+                  addWidget: CreateVoucherScreen(),
+                ),
                 MainScreenButton("sells", Icons.abc, Purchase()),
               ],
             ),
@@ -67,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            Container(
+            SizedBox(
               height: 500,
               child: ListView.builder(
                 itemCount: 1,

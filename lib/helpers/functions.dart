@@ -4,7 +4,7 @@ import 'package:tt/routes/home.dart';
 enum PushMethod { replacement, push }
 
 void navigateTo(BuildContext context,
-    {Widget? to, PushMethod type = PushMethod.replacement}) {
+    {Widget? to, PushMethod type = PushMethod.push}) {
   type == PushMethod.replacement
       ? Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => to ?? const HomePage()))
