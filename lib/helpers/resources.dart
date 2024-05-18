@@ -5,3 +5,6 @@ const resTotal = "الاجمالي";
 const resAmount = "المبلغ";
 const resPurchases = "المشتريات";
 const resSells = "المبيعات";
+const resVouchers = "السندات";
+const resCategories = "الأصناف";
+const resAdd = "إضافة";

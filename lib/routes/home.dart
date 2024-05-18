@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:tt/components/dialog.dart';
 import 'package:tt/helpers/functions.dart';
 import 'package:tt/helpers/resources.dart';
+import 'package:tt/routes/category/add_category.dart';
 import 'package:tt/routes/purchases/add_purchase.dart';
 import 'package:tt/routes/purchases/purchases.dart';
 import 'package:tt/routes/sell/add_sell.dart';
@@ -33,57 +34,62 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Main Screen'),
-      ),
-      drawer: Drawer(
-          // Add your drawer items here
-          ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                MainScreenButton(
-                    resPurchases, Icons.add_shopping_cart_outlined, Purchase(),
-                    addWidget: AddForwardPurchase()),
-                MainScreenButton(resSells, Icons.paid_outlined, Sells(),
-                    addWidget: AddSells()),
-              ],
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Main Screen'),
+        ),
+        drawer: Drawer(
+            // Add your drawer items here
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                MainScreenButton(
-                  "السندات",
-                  Icons.payments,
-                  Vouchers(),
-                  addWidget: CreateVoucherScreen(),
-                ),
-                MainScreenButton("sells", Icons.abc, Purchase()),
-              ],
-            ),
-            ExpansionTile(
-              title: Text('Click to Expand'),
-              children: [
-                ListTile(
-                  title: Text('Item 1'),
-                  onTap: () {},
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 500,
-              child: ListView.builder(
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return;
-                },
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MainScreenButton(resPurchases,
+                      Icons.add_shopping_cart_outlined, Purchase(),
+                      addWidget: AddForwardPurchase()),
+                  MainScreenButton(resSells, Icons.paid_outlined, Sells(),
+                      addWidget: AddSells()),
+                ],
               ),
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MainScreenButton(
+                    resVouchers,
+                    Icons.payments,
+                    Vouchers(),
+                    addWidget: CreateVoucherScreen(),
+                  ),
+                  MainScreenButton("sells", Icons.abc, Purchase()),
+                ],
+              ),
+              ExpansionTile(
+                title: Text(resCategories),
+                children: [
+                  ListTile(
+                    title: Text(resAdd),
+                    onTap: () {
+                      showDialogBox(context, AddCategory());
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 500,
+                child: ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index) {
+                    return;
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -107,7 +113,7 @@ class MainScreenButton extends StatelessWidget {
       padding: const EdgeInsets.all(5.0),
       child: GestureDetector(
         onTap: () {
-          navigateTo(context, to: route, type: PushMethod.push);
+          navigateTo(context, to: route);
         },
         child: Container(
           // Take 50% of the screen width
@@ -161,7 +167,7 @@ class MainScreenButton extends StatelessWidget {
                         icon:
                             Icon(Icons.add_circle_outline_rounded, size: 30.0),
                         onPressed: () {
-                          navigateTo(context, to: route, type: PushMethod.push);
+                          navigateTo(context, to: route);
                           showDialogBox(context, addWidget!);
                           // navigateTo(context,
                           //     to: addWidget, type: PushMethod.push);

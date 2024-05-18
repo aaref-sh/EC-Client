@@ -39,6 +39,9 @@ dependencies:
   vtable: ^0.4.0
   collection: ^1.18.0
   intl: ^0.19.0
+  dropdown_search: ^5.0.6
+  dio: ^5.4.3+1
+  searchfield: ^1.0.1
 
 dev_dependencies:
   flutter_test:

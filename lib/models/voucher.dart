@@ -147,7 +147,7 @@ class ListVoucherResponse extends ApiPagingResponse<VoucherViewModel> {
 
 // Generic ApiPagingResponse class in Dart
 class ApiPagingResponse<T> {
-  Iterable<T>? data;
+  List<T>? data;
   int? pageNumber;
   int? totalPages;
   ResultCode code;
@@ -155,6 +155,17 @@ class ApiPagingResponse<T> {
 
   ApiPagingResponse(this.code,
       {this.data, this.pageNumber, this.totalPages, this.message});
+
+  factory ApiPagingResponse.fromJson(
+      Map<String, dynamic> json, T Function(Map<String, dynamic>) create) {
+    return ApiPagingResponse<T>(
+      ResultCode.values[json['code']], // Assuming ResultCode is an enum
+      data: (json['data'] as List).map((item) => create(item)).toList(),
+      pageNumber: json['pageNumber'],
+      totalPages: json['totalPages'],
+      message: json['message'],
+    );
+  }
 }
 // Dart does not have attributes like C#'s FromHeader and Range,
 // so you would handle validation and header extraction manually.

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tt/components/base_route.dart';
 import 'package:tt/components/list_table.dart';
-import 'package:tt/enums/main_account_enum.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/category.dart';
-import 'package:tt/models/category_group.dart';
 import 'package:tt/models/sell.dart';
 
 final items = <Sell>[
@@ -15,17 +13,7 @@ final items = <Sell>[
       soldCategories: [
         SellCategory(
             amount: 6,
-            category: Category(
-                id: 0,
-                name: "صنف 1",
-                categoryGroup: CategoryGroup(id: 1, name: "مجموعة صنف 1"),
-                dateTime: DateTime.now(),
-                initialAmount: 2,
-                price: 1,
-                notes: 'ملاحظات',
-                expireDate: DateTime.now().add(Duration(days: 1)),
-                imagePath: 'imagePath',
-                saleingType: SellingType.gram),
+            category: Category(id: 0, name: "صنف 1"),
             price: 40000,
             extraDetails: '')
       ],
