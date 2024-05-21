@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:tt/components/bottom_sheet.dart';
+import 'package:tt/helpers/resources.dart';
 import 'package:tt/models/category_group.dart';
 import 'package:tt/models/voucher.dart';
+import 'package:vtable/vtable.dart';
 
 import '../enums/main_account_enum.dart';
 
@@ -32,6 +36,42 @@ class Category {
       categories.add(Category.fromJson(json[i]));
     }
     return categories;
+  }
+
+  static List<VTableColumn<Category>> columnConfigs(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
+    return [
+      VTableColumn(
+        label: '#',
+        width: (width * 2 / 12).round(),
+        alignment: Alignment.center,
+        transformFunction: (row) => (row.id).toString(),
+        compareFunction: (a, b) => a.id.compareTo(b.id),
+        icon: Icons.numbers,
+      ),
+      VTableColumn(
+        label: resName,
+        width: (width * 5 / 12).round() - 1,
+        alignment: Alignment.center,
+        transformFunction: (row) => row.name,
+        compareFunction: (a, b) => a.name.compareTo(b.name),
+        // validators: [SampleRowData.validateGravity],
+      ),
+      VTableColumn(
+        label: '',
+        width: (width * 1 / 12).round(),
+        alignment: Alignment.center,
+        renderFunction: (context, object, out) {
+          return GestureDetector(
+              onTap: () {
+                showBottomDrawer(context, object.id, "Category");
+              },
+              child: Icon(Icons.more_horiz));
+        },
+        // validators: [SampleRowData.validateGravity],
+      ),
+    ];
   }
 }
 

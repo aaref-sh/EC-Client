@@ -7,12 +7,6 @@ import 'package:tt/models/category.dart';
 import 'package:tt/models/fund.dart';
 import 'package:tt/helpers/functions.dart';
 
-class Repository {
-  int id;
-  String name;
-  Repository(this.id, this.name);
-}
-
 class Sell {
   int id;
   String clientName;

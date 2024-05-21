@@ -243,7 +243,6 @@ class TransactionItem {
   double debit; // Dart doesn't have a decimal type; double is commonly used.
   double credit; // Dart doesn't have a decimal type; double is commonly used.
   int accountId;
-  Account? account;
   int transactionId;
   Transaction? transaction;
 
@@ -267,24 +266,4 @@ enum AccountType {
   expense,
   // حقوق الملكية
   equity,
-}
-
-// Dart class for Account
-class Account {
-  int id;
-  String name;
-  bool enabled;
-  String? notes;
-  AccountType type;
-  int? baseAccountId;
-  Account? baseAccount;
-
-  Account({
-    required this.id,
-    required this.name,
-    required this.enabled,
-    this.notes,
-    required this.type,
-    this.baseAccountId,
-  });
 }

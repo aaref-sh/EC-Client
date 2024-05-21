@@ -1,32 +1,39 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
-import 'package:tt/models/category.dart';
+import 'package:tt/models/account.dart';
 import 'package:tt/helpers/functions.dart';
 import 'package:tt/models/voucher.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 
-class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
+class AddAccount extends StatefulWidget {
+  const AddAccount({super.key});
 
   @override
-  State<AddCategory> createState() => _AddCategoryState();
+  State<AddAccount> createState() => _AddAccountState();
 }
 
-class _AddCategoryState extends State<AddCategory> {
+class _AddAccountState extends State<AddAccount> {
   TextEditingController controller = TextEditingController();
   bool loading = false;
-  TextEditingController nameController = TextEditingController();
-  int? _parentCategory;
-  int? _debitAccountId;
-  var suggestions = <Category>[];
+  var nameController = TextEditingController();
+  var notesController = TextEditingController();
+  int? baseAccountId;
+  var suggestions = <Account>[];
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      onTap: () {
+        // Hide the keyboard by removing focus from the text field
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus &&
+            currentFocus.focusedChild != null) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
+      },
       child: Column(
         children: [
           TextFormField(
@@ -34,16 +41,17 @@ class _AddCategoryState extends State<AddCategory> {
             controller: nameController,
           ),
           SearchField(
-            onTapOutside: (e) => FocusManager.instance.primaryFocus?.unfocus(),
             onSearchTextChanged: onSearchTextChanged,
-            hint: 'التصنيف الأب',
+            hint: resBaseAccount,
             onSuggestionTap: (item) {
-              _parentCategory = item.item?.id;
+              baseAccountId = item.item?.id;
             },
             emptyWidget: autoCompshitEmptyWidget(),
-            suggestions: suggestions
-                .map((e) => SearchFieldListItem<Category>(e.name, item: e))
-                .toList(),
+            suggestions: getAccountSuggestions(),
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: resNotes),
+            controller: notesController,
           ),
           const SizedBox(height: 5),
           ElevatedButton(
@@ -52,16 +60,26 @@ class _AddCategoryState extends State<AddCategory> {
                 var dio = Dio();
                 dio.options.headers['Authorization'] = 'Bearer ';
                 dio.options.headers['Content-Type'] = 'application/json';
-                var cat = Category(
-                    name: nameController.text, baseCategoryId: _parentCategory);
+                var cat = Account(
+                    id: -1,
+                    name: nameController.text,
+                    notes: notesController.text,
+                    baseAccountId: baseAccountId);
                 try {
                   var response =
-                      await dio.post("${host}Category/Create", data: cat);
+                      await dio.post("${host}Account/Create", data: cat);
                   if (response.statusCode == 200) {
+                    nameController.text = notesController.text = '';
+                    baseAccountId = null;
+
                     var cat = response.data;
+                    hideLoadingPanel(context);
+                    showErrorMessage(context, resDone);
                   }
                 } catch (e) {
                   // show toast error message
+                  hideLoadingPanel(context);
+                  showErrorMessage(context, resError);
 
                   print(e);
                 }
@@ -72,38 +90,39 @@ class _AddCategoryState extends State<AddCategory> {
     );
   }
 
-  List<SearchFieldListItem<Category>>? onSearchTextChanged(query) {
+  List<SearchFieldListItem<Account>> getAccountSuggestions() {
+    return suggestions
+        .map((e) => SearchFieldListItem<Account>(e.name, item: e))
+        .toList();
+  }
+
+  List<SearchFieldListItem<Account>>? onSearchTextChanged(query) {
     setState(() {
-      _parentCategory = null;
+      baseAccountId = null;
       loading = true;
-      suggestions = <Category>[];
+      suggestions = <Account>[];
     });
     var dio = Dio();
-    var header = ListCategoryRequest(name: query, pageNumber: 1, pageSize: 20);
+    var header = ListAccountRequest(name: query, pageNumber: 1, pageSize: 10);
     dio
-        .get(
-      "${host}Category/List",
-      options: Options(
-        headers: {"request": header.toJson()},
-      ),
-    )
+        .get("${host}Account/List", options: Options(headers: header.toJson()))
         .then((value) {
       var response =
-          ApiPagingResponse<Category>.fromJson(value.data, Category.fromJson);
+          ApiPagingResponse<Account>.fromJson(value.data, Account.fromJson);
       setState(() {
         suggestions = response.data
                 ?.where(
                     (x) => x.name.toLowerCase().contains(query.toLowerCase()))
                 .toList() ??
-            <Category>[];
+            <Account>[];
         loading = false;
       });
       return suggestions
-          .map((e) => SearchFieldListItem<Category>(e.name, item: e))
+          .map((e) => SearchFieldListItem<Account>(e.name, item: e))
           .toList();
     }).onError((error, stackTrace) {
       setState(() => loading = false);
-      return <SearchFieldListItem<Category>>[];
+      return <SearchFieldListItem<Account>>[];
     });
     return null;
   }

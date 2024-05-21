@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tt/components/base_route.dart';
+import 'package:tt/components/dialog.dart';
 import 'package:tt/components/list_table.dart';
 import 'package:tt/enums/server_enums.dart';
+import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/voucher.dart';
 import 'package:intl/intl.dart';
+import 'package:tt/routes/voucher/add_voucher.dart';
 
 final items = <VoucherViewModel>[
   VoucherViewModel(
@@ -28,7 +31,7 @@ class _VouchersState extends State<Vouchers> {
   @override
   Widget build(BuildContext context) {
     return BaseRout(
-      routeName: "المبيعات",
+      routeName: resVouchers,
       child: createTable(),
     );
   }
@@ -36,7 +39,13 @@ class _VouchersState extends State<Vouchers> {
   DateFormat formatter = DateFormat('yyyy-MM-dd');
   GVTable createTable() {
     return GVTable<VoucherViewModel>(
-      filterWidgets: const [Icon(Icons.home_outlined)],
+      filterWidgets: [
+        IconButton(
+            onPressed: () {
+              showDialogBox(context, AddVoucherScreen());
+            },
+            icon: Icon(Icons.add))
+      ],
       actions: const [Icon(Icons.delete)],
       showToolbar: showTableHeaders,
       items: items,

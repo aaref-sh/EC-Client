@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:tt/components/bottom_sheet.dart';
+import 'package:tt/helpers/functions.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/models/voucher.dart';
 import 'package:vtable/vtable.dart';
 
-class Account {
+class Repository {
   int id;
   String name;
   String? notes;
-  int? baseAccountId;
+  Repository({this.id = -1, required this.name, this.notes});
 
-  Account(
-      {required this.id, required this.name, this.notes, this.baseAccountId});
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'notes': notes,
+      };
 
-  factory Account.fromJson(Map<String, dynamic> json) {
-    return Account(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      notes: json['notes'] as String?,
-      baseAccountId: json['baseAccountId'] as int?,
-    );
-  }
+  static Repository fromJson(Map<String, dynamic> json) => Repository(
+        id: json['id'],
+        name: json['name'],
+        notes: json['notes'],
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'notes': notes,
-      'baseAccountId': baseAccountId,
-    };
-  }
-
-  static List<VTableColumn<Account>> columnConfigs(BuildContext context) {
+  static List<VTableColumn<Repository>> columnConfigs(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
 
     return [
@@ -66,10 +58,9 @@ class Account {
         renderFunction: (context, object, out) {
           return GestureDetector(
               onTap: () {
-                showBottomDrawer(context, object.id, "Account",
-                    withDelete: false);
+                showBottomDrawer(context, object.id, "Repository");
               },
-              child: Icon(Icons.more_vert));
+              child: Icon(Icons.more_horiz));
         },
         // validators: [SampleRowData.validateGravity],
       ),
@@ -77,25 +68,10 @@ class Account {
   }
 }
 
-class ListAccountRequest extends ApiPagingRequest {
-  String name;
-  int? type;
-  int? baseAccountId;
+class RepositoryApiPagingRequest extends ApiPagingRequest {
+  RepositoryApiPagingRequest(
+      {required super.pageNumber, required super.pageSize});
 
-  // constructor
-  ListAccountRequest(
-      {required this.name,
-      this.type,
-      this.baseAccountId,
-      required super.pageNumber,
-      required super.pageSize});
-
-  // toJson method
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "type": type,
-        "baseAccountId": baseAccountId,
-        "pageNumber": pageNumber,
-        "pageSize": pageSize
-      };
+  Map<String, dynamic> toJson() =>
+      {"pageNumber": pageNumber, "pageSize": pageSize};
 }

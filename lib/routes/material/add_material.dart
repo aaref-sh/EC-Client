@@ -1,27 +1,30 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/category.dart';
+import 'package:tt/models/material.dart' as models;
 import 'package:tt/helpers/functions.dart';
 import 'package:tt/models/voucher.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 
-class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
+class AddMaterial extends StatefulWidget {
+  const AddMaterial({super.key});
 
   @override
-  State<AddCategory> createState() => _AddCategoryState();
+  State<AddMaterial> createState() => _AddMaterialState();
 }
 
-class _AddCategoryState extends State<AddCategory> {
+class _AddMaterialState extends State<AddMaterial> {
   TextEditingController controller = TextEditingController();
   bool loading = false;
-  TextEditingController nameController = TextEditingController();
-  int? _parentCategory;
-  int? _debitAccountId;
+  var nameController = TextEditingController();
+  var notesController = TextEditingController();
+  var codeController = TextEditingController();
+  int? categoryId;
+  String? categoryName;
   var suggestions = <Category>[];
   @override
   Widget build(BuildContext context) {
@@ -34,16 +37,22 @@ class _AddCategoryState extends State<AddCategory> {
             controller: nameController,
           ),
           SearchField(
-            onTapOutside: (e) => FocusManager.instance.primaryFocus?.unfocus(),
             onSearchTextChanged: onSearchTextChanged,
-            hint: 'التصنيف الأب',
+            hint: resCategory,
             onSuggestionTap: (item) {
-              _parentCategory = item.item?.id;
+              categoryName = null;
+              categoryId = item.item?.id;
             },
             emptyWidget: autoCompshitEmptyWidget(),
-            suggestions: suggestions
-                .map((e) => SearchFieldListItem<Category>(e.name, item: e))
-                .toList(),
+            suggestions: getCategorySuggestions(),
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: resNotes),
+            controller: notesController,
+          ),
+          TextFormField(
+            decoration: InputDecoration(labelText: resCode),
+            controller: codeController,
           ),
           const SizedBox(height: 5),
           ElevatedButton(
@@ -52,16 +61,29 @@ class _AddCategoryState extends State<AddCategory> {
                 var dio = Dio();
                 dio.options.headers['Authorization'] = 'Bearer ';
                 dio.options.headers['Content-Type'] = 'application/json';
-                var cat = Category(
-                    name: nameController.text, baseCategoryId: _parentCategory);
+                var cat = models.Materiale(
+                    id: -1,
+                    name: nameController.text,
+                    categoryId: categoryId,
+                    categoryName: categoryName,
+                    notes: notesController.text,
+                    code: codeController.text);
                 try {
                   var response =
-                      await dio.post("${host}Category/Create", data: cat);
+                      await dio.post("${host}Material/Create", data: cat);
                   if (response.statusCode == 200) {
+                    nameController.text = notesController.text = '';
+                    codeController.text = categoryName = '';
+                    categoryId = null;
+
                     var cat = response.data;
+                    hideLoadingPanel(context);
+                    showErrorMessage(context, resDone);
                   }
                 } catch (e) {
                   // show toast error message
+                  hideLoadingPanel(context);
+                  showErrorMessage(context, resError);
 
                   print(e);
                 }
@@ -72,14 +94,21 @@ class _AddCategoryState extends State<AddCategory> {
     );
   }
 
+  List<SearchFieldListItem<Category>> getCategorySuggestions() {
+    return suggestions
+        .map((e) => SearchFieldListItem<Category>(e.name, item: e))
+        .toList();
+  }
+
   List<SearchFieldListItem<Category>>? onSearchTextChanged(query) {
     setState(() {
-      _parentCategory = null;
+      categoryName = query;
+      categoryId = null;
       loading = true;
       suggestions = <Category>[];
     });
     var dio = Dio();
-    var header = ListCategoryRequest(name: query, pageNumber: 1, pageSize: 20);
+    var header = ListCategoryRequest(name: query, pageNumber: 1, pageSize: 7);
     dio
         .get(
       "${host}Category/List",

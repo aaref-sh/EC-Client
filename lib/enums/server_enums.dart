@@ -6,6 +6,11 @@ enum VoucherType {
   payment,
 }
 
+String VoucherLabel(VoucherType voucher) => switch (voucher) {
+      VoucherType.receipt => "قبض",
+      VoucherType.payment => "دفع"
+    };
+
 // Extension on VoucherType to include values
 extension VoucherTypeExtension on VoucherType {
   int get value {

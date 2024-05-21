@@ -14,14 +14,24 @@ class _BaseRoutState extends State<BaseRout> {
   Widget build(BuildContext context) {
     return Directionality(
         textDirection: TextDirection.rtl,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(widget.routeName),
-          ),
-          body: Stack(
-            children: [
-              widget.child,
-            ],
+        child: GestureDetector(
+          onTap: () {
+            // Hide the keyboard by removing focus from the text field
+            FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus &&
+                currentFocus.focusedChild != null) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(widget.routeName),
+            ),
+            body: Stack(
+              children: [
+                widget.child,
+              ],
+            ),
           ),
         ));
   }
