@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tt/components/base_route.dart';
 import 'package:tt/components/dialog.dart';
+import 'package:tt/components/search_bar.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/category.dart';
@@ -18,6 +19,8 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
+  var searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 // future builder to fetch data from server
@@ -39,14 +42,22 @@ class _CategoriesState extends State<Categories> {
 
   VTable createTable(List<Category> items) {
     return VTable<Category>(
-      filterWidgets: [
+      actions: [
         IconButton(
             onPressed: () {
               showDialogBox(context, AddCategory());
             },
             icon: Icon(Icons.add))
       ],
-      actions: const [Icon(Icons.delete)],
+      filterWidgets: [
+        CustomSearchBar(
+          controller: searchController,
+          onSearchPressed: () {
+            // Define what should happen when the button is pressed
+            print('Search button was pressed!');
+          },
+        )
+      ],
       showToolbar: true,
       items: items,
       tableDescription: '${items.length} عنصر',

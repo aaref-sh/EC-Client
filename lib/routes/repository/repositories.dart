@@ -1,11 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tt/components/base_route.dart';
 import 'package:tt/components/dialog.dart';
+import 'package:tt/components/search_bar.dart';
+import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
-import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/repository.dart';
-import 'package:tt/models/voucher.dart';
 import 'package:tt/routes/repository/add_repository.dart';
 import 'package:vtable/vtable.dart';
 
@@ -17,13 +16,18 @@ class Repositories extends StatefulWidget {
 }
 
 class _RepositoriesState extends State<Repositories> {
+  var searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 // future builder to fetch data from server
     return BaseRout(
       routeName: resRepos,
       child: FutureBuilder<List<Repository>>(
-          future: fetchRepositories(),
+          future: fetchFromServer<Repository>(
+              controller: "Repository",
+              fromJson: Repository.fromJson,
+              paging: RepositoryApiPagingRequest(pageNumber: 1, pageSize: 10)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return createTable(snapshot.data!);
@@ -38,14 +42,22 @@ class _RepositoriesState extends State<Repositories> {
 
   VTable createTable(List<Repository> items) {
     return VTable<Repository>(
-      filterWidgets: [
+      actions: [
         IconButton(
             onPressed: () {
               showDialogBox(context, AddRepository());
             },
             icon: Icon(Icons.add))
       ],
-      actions: const [Icon(Icons.delete)],
+      filterWidgets: [
+        CustomSearchBar(
+          controller: searchController,
+          onSearchPressed: () {
+            // Define what should happen when the button is pressed
+            print('Search button was pressed!');
+          },
+        )
+      ],
       showToolbar: true,
       items: items,
       tableDescription: '${items.length} عنصر',
@@ -53,18 +65,5 @@ class _RepositoriesState extends State<Repositories> {
       includeCopyToClipboardAction: true,
       columns: Repository.columnConfigs(context),
     );
-  }
-
-  Future<List<Repository>>? fetchRepositories() async {
-    var dio = Dio();
-    var paging = RepositoryApiPagingRequest(pageNumber: 1, pageSize: 10);
-    dio.options.headers['Content-Type'] = 'application/json';
-    dio.options.headers['Accept'] = 'application/json';
-    dio.options.headers['Authorization'] = 'Bearer ';
-    dio.options.headers.addAll(paging.toJson());
-
-    var response = await dio.get("${host}Repository/List");
-    var data = ApiPagingResponse.fromJson(response.data, Repository.fromJson);
-    return data.data!;
   }
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/category.dart';
@@ -21,7 +22,6 @@ class _AddCategoryState extends State<AddCategory> {
   bool loading = false;
   TextEditingController nameController = TextEditingController();
   int? _parentCategory;
-  int? _debitAccountId;
   var suggestions = <Category>[];
   @override
   Widget build(BuildContext context) {
@@ -54,15 +54,20 @@ class _AddCategoryState extends State<AddCategory> {
                 dio.options.headers['Content-Type'] = 'application/json';
                 var cat = Category(
                     name: nameController.text, baseCategoryId: _parentCategory);
+                showLoadingPanel(context);
                 try {
                   var response =
                       await dio.post("${host}Category/Create", data: cat);
                   if (response.statusCode == 200) {
-                    var cat = response.data;
+                    hideLoadingPanel(context);
+                    showErrorMessage(context, resDone);
+                    // clear fields
+                    nameController.clear();
+                    _parentCategory = null;
                   }
                 } catch (e) {
-                  // show toast error message
-
+                  hideLoadingPanel(context);
+                  showErrorMessage(context, resError);
                   print(e);
                 }
               },

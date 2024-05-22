@@ -11,7 +11,7 @@ class Materiale {
   String notes;
   int? categoryId;
   String? categoryName;
-
+  double? price;
   Materiale({
     required this.id,
     required this.name,
@@ -19,6 +19,7 @@ class Materiale {
     required this.notes,
     required this.categoryId,
     required this.categoryName,
+    this.price,
   });
 
   factory Materiale.fromJson(Map<String, dynamic> json) {
@@ -29,6 +30,7 @@ class Materiale {
       notes: json['notes'] as String,
       categoryId: json['categoryId'] as int,
       categoryName: json['categoryName'] as String,
+      price: json['price'] as double?,
     );
   }
 
@@ -40,6 +42,7 @@ class Materiale {
       'notes': notes,
       'categoryId': categoryId,
       'categoryName': categoryName,
+      'price': price,
     };
   }
 

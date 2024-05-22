@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tt/components/base_route.dart';
 import 'package:tt/components/dialog.dart';
+import 'package:tt/components/search_bar.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/account.dart';
@@ -20,11 +21,12 @@ class Accounts extends StatefulWidget {
 }
 
 class _AccountsState extends State<Accounts> {
+  var searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
 // future builder to fetch data from server
     return BaseRout(
-      routeName: resVouchers,
+      routeName: resAccounts,
       child: FutureBuilder<List<Account>>(
           future: fetchAccounts(),
           builder: (context, snapshot) {
@@ -50,6 +52,7 @@ class _AccountsState extends State<Accounts> {
       ],
       filterWidgets: [
         CustomSearchBar(
+          controller: searchController,
           onSearchPressed: () {
             // Define what should happen when the button is pressed
             print('Search button was pressed!');
@@ -76,33 +79,5 @@ class _AccountsState extends State<Accounts> {
     var response = await dio.get("${host}Account/List");
     var data = ApiPagingResponse.fromJson(response.data, Account.fromJson);
     return data.data!;
-  }
-}
-
-class CustomSearchBar extends StatelessWidget {
-  final VoidCallback onSearchPressed;
-
-  CustomSearchBar({required this.onSearchPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 170,
-      padding: EdgeInsets.symmetric(horizontal: 2),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: 'Search',
-          border: InputBorder.none,
-          prefixIcon: IconButton(
-            icon: Icon(Icons.search),
-            onPressed: onSearchPressed,
-          ),
-        ),
-      ),
-    );
   }
 }

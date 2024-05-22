@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tt/components/list_table.dart';
+import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/functions.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:tt/enums/server_enums.dart';
+import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/account.dart';
@@ -52,16 +55,18 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
             TextFormField(
               decoration: InputDecoration(labelText: resValue),
               keyboardType: TextInputType.number,
-              onSaved: (String? value) {
-                _value = double.tryParse(value ?? '');
+              onChanged: (value) {
+                _value = double.tryParse(value);
               },
             ),
-            TextFormField(
-              decoration: InputDecoration(labelText: resDebit),
-              keyboardType: TextInputType.number,
-              onSaved: (String? value) {
-                debitAccountId = int.tryParse(value ?? '');
+            SearchField(
+              onSearchTextChanged: onSearchTextChanged,
+              hint: resDebit,
+              onSuggestionTap: (item) {
+                debitAccountId = item.item?.id;
               },
+              emptyWidget: autoCompshitEmptyWidget(loading),
+              suggestions: getAccountSuggestions(),
             ),
             SearchField(
               onSearchTextChanged: onSearchTextChanged,
@@ -69,20 +74,42 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
               onSuggestionTap: (item) {
                 creditAccountId = item.item?.id;
               },
-              emptyWidget: autoCompshitEmptyWidget(),
+              emptyWidget: autoCompshitEmptyWidget(loading),
               suggestions: getAccountSuggestions(),
             ),
             ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
+              onPressed: () async {
+                if (_value != null &&
+                    _value! > 1 &&
+                    debitAccountId != null &&
+                    creditAccountId != null) {
                   _formKey.currentState!.save();
                   // Here you can handle the submission, for example:
-                  // var request = CreateVoucherRequest(
-                  //   type: _selectedType!,
-                  //   value: _value!,
-                  //   creditAccountId: _creditAccountId!,
-                  //   debitAccountId: _debitAccountId!,
-                  // );
+                  var request = CreateVoucherRequest(
+                    type: _selectedType!,
+                    value: _value!,
+                    creditAccountId: creditAccountId!,
+                    debitAccountId: debitAccountId!,
+                  );
+                  showLoadingPanel(context);
+                  try {
+                    var response = await sendPost("Voucher", request);
+                    if (response.statusCode == 200) {
+                      // clear fields
+                      _value = null;
+                      debitAccountId = null;
+                      creditAccountId = null;
+
+                      hideLoadingPanel(context);
+                      showErrorMessage(context, resDone);
+                    } else {
+                      hideLoadingPanel(context);
+                      showErrorMessage(context, resError);
+                    }
+                  } catch (e) {
+                    hideLoadingPanel(context);
+                    showErrorMessage(context, resError);
+                  }
                   // You would then pass this request to your API or data layer.
                 }
               },
@@ -129,26 +156,5 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
       return <SearchFieldListItem<Account>>[];
     });
     return null;
-  }
-
-  SizedBox autoCompshitEmptyWidget() {
-    return SizedBox(
-        height: 100,
-        child: Center(
-            child: !loading
-                ? const Text("No data")
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                              color:
-                                  Colors.deepPurple[900]?.toMaterialColor())),
-                      const SizedBox(width: 10),
-                      const Text("Loading ...")
-                    ],
-                  )));
   }
 }

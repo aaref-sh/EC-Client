@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tt/components/bottom_sheet.dart';
-import 'package:tt/helpers/functions.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/models/voucher.dart';
 import 'package:vtable/vtable.dart';
@@ -71,7 +70,4 @@ class Repository {
 class RepositoryApiPagingRequest extends ApiPagingRequest {
   RepositoryApiPagingRequest(
       {required super.pageNumber, required super.pageSize});
-
-  Map<String, dynamic> toJson() =>
-      {"pageNumber": pageNumber, "pageSize": pageSize};
 }

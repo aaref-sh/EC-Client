@@ -33,6 +33,27 @@ class VoucherViewModel extends VoucherModel {
     required super.value,
   });
 
+// toJson function
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'voucherDate': voucherDate,
+        'debitAccountName': debitAccountName,
+        'creditAccountName': creditAccountName,
+        'notes': notes,
+        'type': type.index,
+      };
+  // fromJson method
+  static VoucherViewModel fromJson(Map<String, dynamic> json) {
+    return VoucherViewModel(
+        id: json['id'],
+        voucherDate: json['voucherDate'],
+        debitAccountName: json['debitAccountName'],
+        creditAccountName: json['creditAccountName'],
+        notes: json['notes'],
+        type: VoucherType.values[json['type'] - 1],
+        value: json['value']);
+  }
+
   static List<ColumnConfig<VoucherViewModel>> columnConfigs(
       BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -52,7 +73,6 @@ class VoucherViewModel extends VoucherModel {
         alignment: Alignment.center,
         renderFunction: (context, row, p2) => Icon(
             row.type == VoucherType.payment ? Icons.download : Icons.upload),
-        compareFunction: (a, b) => a.id.compareTo(b.id),
       ),
       ColumnConfig(
         label: "الدائن",
@@ -91,6 +111,14 @@ class CreateVoucherRequest extends VoucherModel {
     required super.type,
     required super.value,
   });
+  // toJson function
+  Map<String, dynamic> toJson() => {
+        'creditAccountId': creditAccountId,
+        'debitAccountId': debitAccountId,
+        'notes': notes,
+        'type': type.index,
+        'value': value,
+      };
 }
 
 // ApiResponse class to be used for CreateVoucherResponse
@@ -175,6 +203,12 @@ class ApiPagingRequest {
   int pageSize;
 
   ApiPagingRequest({required this.pageNumber, required this.pageSize});
+
+  // toJson method
+  Map<String, dynamic> toJson() => {
+        'pageNumber': pageNumber,
+        'pageSize': pageSize,
+      };
 }
 
 // Assuming Transaction is already defined in your Dart codebase
@@ -209,6 +243,17 @@ class Voucher {
       voucherDate = DateFormat('yyyy-MM-dd').parse(dateString);
     }
   }
+
+  // toJson function
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'type': type.index,
+        'document': document,
+        'voucherDate': formattedVoucherDate,
+        'value': value,
+        'notes': notes,
+        'transactionId': transactionId,
+      };
 }
 
 // Assuming Account is already defined in your Dart codebase

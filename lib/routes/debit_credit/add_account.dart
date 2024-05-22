@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tt/components/list_table.dart';
 import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
@@ -19,6 +20,7 @@ class AddAccount extends StatefulWidget {
 class _AddAccountState extends State<AddAccount> {
   TextEditingController controller = TextEditingController();
   bool loading = false;
+  bool isLeaf = true;
   var nameController = TextEditingController();
   var notesController = TextEditingController();
   int? baseAccountId;
@@ -40,13 +42,20 @@ class _AddAccountState extends State<AddAccount> {
             decoration: InputDecoration(labelText: resName),
             controller: nameController,
           ),
+          SwitchListTile(
+            title: Text(resIsOrganizal), // This is the label
+            value:
+                !isLeaf, // Boolean value that determines the current position of the switch
+            onChanged: (value) => setState(() => isLeaf = !value),
+            secondary: const Icon(Icons.account_tree_outlined), // Optional icon
+          ),
           SearchField(
             onSearchTextChanged: onSearchTextChanged,
             hint: resBaseAccount,
             onSuggestionTap: (item) {
               baseAccountId = item.item?.id;
             },
-            emptyWidget: autoCompshitEmptyWidget(),
+            emptyWidget: autoCompshitEmptyWidget(loading),
             suggestions: getAccountSuggestions(),
           ),
           TextFormField(
@@ -56,12 +65,16 @@ class _AddAccountState extends State<AddAccount> {
           const SizedBox(height: 5),
           ElevatedButton(
               onPressed: () async {
-                if (nameController.text.isEmpty) return;
+                if (nameController.text.isEmpty) {
+                  showErrorMessage(context, resAllFieldsRequired);
+                  return;
+                }
                 var dio = Dio();
                 dio.options.headers['Authorization'] = 'Bearer ';
                 dio.options.headers['Content-Type'] = 'application/json';
                 var cat = Account(
                     id: -1,
+                    isLeaf: isLeaf,
                     name: nameController.text,
                     notes: notesController.text,
                     baseAccountId: baseAccountId);
@@ -71,8 +84,6 @@ class _AddAccountState extends State<AddAccount> {
                   if (response.statusCode == 200) {
                     nameController.text = notesController.text = '';
                     baseAccountId = null;
-
-                    var cat = response.data;
                     hideLoadingPanel(context);
                     showErrorMessage(context, resDone);
                   }
@@ -125,26 +136,5 @@ class _AddAccountState extends State<AddAccount> {
       return <SearchFieldListItem<Account>>[];
     });
     return null;
-  }
-
-  SizedBox autoCompshitEmptyWidget() {
-    return SizedBox(
-        height: 100,
-        child: Center(
-            child: !loading
-                ? const Text("No data")
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                              color:
-                                  Colors.deepPurple[900]?.toMaterialColor())),
-                      const SizedBox(width: 10),
-                      const Text("Loading ...")
-                    ],
-                  )));
   }
 }

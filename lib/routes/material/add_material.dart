@@ -76,7 +76,6 @@ class _AddMaterialState extends State<AddMaterial> {
                     codeController.text = categoryName = '';
                     categoryId = null;
 
-                    var cat = response.data;
                     hideLoadingPanel(context);
                     showErrorMessage(context, resDone);
                   }

@@ -29,3 +29,5 @@ const resDebit = 'مدين';
 const resCredit = 'دائن';
 const resType = 'النوع';
 const resBaseAccount = 'الحساب الأب';
+const resIsOrganizal = "تنظيمي";
+const resAllFieldsRequired = "يجب ملئ الحقول المطلوبة";

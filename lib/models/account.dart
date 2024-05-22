@@ -9,9 +9,13 @@ class Account {
   String name;
   String? notes;
   int? baseAccountId;
-
+  bool isLeaf;
   Account(
-      {required this.id, required this.name, this.notes, this.baseAccountId});
+      {required this.id,
+      required this.name,
+      this.notes,
+      this.baseAccountId,
+      this.isLeaf = true});
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
@@ -19,6 +23,7 @@ class Account {
       name: json['name'] as String,
       notes: json['notes'] as String?,
       baseAccountId: json['baseAccountId'] as int?,
+      isLeaf: json['isLeaf'] ?? false,
     );
   }
 
@@ -28,6 +33,7 @@ class Account {
       'name': name,
       'notes': notes,
       'baseAccountId': baseAccountId,
+      'isLeaf': isLeaf,
     };
   }
 
@@ -45,7 +51,7 @@ class Account {
       ),
       VTableColumn(
         label: resName,
-        width: (width * 5 / 12).round() - 1,
+        width: (width * 4 / 12).round() - 1,
         alignment: Alignment.center,
         transformFunction: (row) => row.name,
         compareFunction: (a, b) => a.name.compareTo(b.name),
@@ -53,10 +59,19 @@ class Account {
       ),
       VTableColumn(
         label: resNotes,
-        width: (width * 4 / 12).round(),
+        width: (width * 3 / 12).round(),
         alignment: Alignment.center,
         transformFunction: (row) => row.notes ?? "",
         compareFunction: (a, b) => (a.notes ?? "").compareTo(b.notes ?? ""),
+        // validators: [SampleRowData.validateGravity],
+      ),
+      VTableColumn(
+        label: resIsOrganizal,
+        width: (width * 2 / 12).round(),
+        alignment: Alignment.center,
+        compareFunction: (a, b) => (a.notes ?? "").compareTo(b.notes ?? ""),
+        renderFunction: (context, object, out) =>
+            Icon(object.isLeaf ? Icons.check : Icons.close),
         // validators: [SampleRowData.validateGravity],
       ),
       VTableColumn(
