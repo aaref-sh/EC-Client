@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tt/components/list_table.dart';
 import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
@@ -40,7 +41,7 @@ class _AddCategoryState extends State<AddCategory> {
             onSuggestionTap: (item) {
               _parentCategory = item.item?.id;
             },
-            emptyWidget: autoCompshitEmptyWidget(),
+            emptyWidget: autoCompshitEmptyWidget(loading),
             suggestions: suggestions
                 .map((e) => SearchFieldListItem<Category>(e.name, item: e))
                 .toList(),
@@ -111,26 +112,5 @@ class _AddCategoryState extends State<AddCategory> {
       return <SearchFieldListItem<Category>>[];
     });
     return null;
-  }
-
-  SizedBox autoCompshitEmptyWidget() {
-    return SizedBox(
-        height: 100,
-        child: Center(
-            child: !loading
-                ? const Text("No data")
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                              color:
-                                  Colors.deepPurple[900]?.toMaterialColor())),
-                      const SizedBox(width: 10),
-                      const Text("Loading ...")
-                    ],
-                  )));
   }
 }

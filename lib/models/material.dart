@@ -9,9 +9,11 @@ class Materiale {
   String name;
   String code;
   String notes;
+  String? tag;
   int? categoryId;
   String? categoryName;
   double? price;
+
   Materiale({
     required this.id,
     required this.name,
@@ -20,6 +22,7 @@ class Materiale {
     required this.categoryId,
     required this.categoryName,
     this.price,
+    this.tag,
   });
 
   factory Materiale.fromJson(Map<String, dynamic> json) {
@@ -31,6 +34,7 @@ class Materiale {
       categoryId: json['categoryId'] as int,
       categoryName: json['categoryName'] as String,
       price: json['price'] as double?,
+      tag: json['tag'] as String?,
     );
   }
 
@@ -43,6 +47,7 @@ class Materiale {
       'categoryId': categoryId,
       'categoryName': categoryName,
       'price': price,
+      'tag': tag,
     };
   }
 
@@ -115,6 +120,50 @@ class MaterialApiPagingRequest extends ApiPagingRequest {
       'name': name,
       'pageNumber': pageNumber,
       'pageSize': pageSize,
+    };
+  }
+}
+
+class PickMaterial {
+  final int materialId;
+  final String materialName;
+  final int repositoryId;
+  final String repositoryName;
+  final int id;
+  final String buyDate;
+  final double amount;
+
+  PickMaterial({
+    required this.materialId,
+    required this.materialName,
+    required this.repositoryId,
+    required this.repositoryName,
+    required this.id,
+    required this.buyDate,
+    required this.amount,
+  });
+
+  factory PickMaterial.fromJson(Map<String, dynamic> json) {
+    return PickMaterial(
+      materialId: json['materialId'] as int,
+      materialName: json['materialName'] as String,
+      repositoryId: json['repositoryId'] as int,
+      repositoryName: json['repositoryName'] as String,
+      id: json['id'] as int,
+      buyDate: json['buyDate'] as String,
+      amount: json['amount'] as double,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'materialId': materialId,
+      'materialName': materialName,
+      'repositoryId': repositoryId,
+      'repositoryName': repositoryName,
+      'id': id,
+      'buyDate': buyDate,
+      'amount': amount,
     };
   }
 }

@@ -7,8 +7,6 @@ import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/account.dart';
 import 'package:tt/helpers/functions.dart';
-import 'package:tt/models/voucher.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
 
 class AddAccount extends StatefulWidget {
   const AddAccount({super.key});
@@ -19,8 +17,6 @@ class AddAccount extends StatefulWidget {
 
 class _AddAccountState extends State<AddAccount> {
   TextEditingController controller = TextEditingController();
-  bool loading = false;
-  bool isLeaf = true;
   var nameController = TextEditingController();
   var notesController = TextEditingController();
   int? baseAccountId;
@@ -42,20 +38,11 @@ class _AddAccountState extends State<AddAccount> {
             decoration: InputDecoration(labelText: resName),
             controller: nameController,
           ),
-          SwitchListTile(
-            title: Text(resIsOrganizal), // This is the label
-            value:
-                !isLeaf, // Boolean value that determines the current position of the switch
-            onChanged: (value) => setState(() => isLeaf = !value),
-            secondary: const Icon(Icons.account_tree_outlined), // Optional icon
-          ),
           SearchField(
             onSearchTextChanged: onSearchTextChanged,
             hint: resBaseAccount,
-            onSuggestionTap: (item) {
-              baseAccountId = item.item?.id;
-            },
-            emptyWidget: autoCompshitEmptyWidget(loading),
+            onSuggestionTap: (item) => baseAccountId = item.item?.id,
+            emptyWidget: autoCompshitEmptyWidget(false),
             suggestions: getAccountSuggestions(),
           ),
           TextFormField(
@@ -74,7 +61,7 @@ class _AddAccountState extends State<AddAccount> {
                 dio.options.headers['Content-Type'] = 'application/json';
                 var cat = Account(
                     id: -1,
-                    isLeaf: isLeaf,
+                    isLeaf: true,
                     name: nameController.text,
                     notes: notesController.text,
                     baseAccountId: baseAccountId);
@@ -108,33 +95,13 @@ class _AddAccountState extends State<AddAccount> {
   }
 
   List<SearchFieldListItem<Account>>? onSearchTextChanged(query) {
-    setState(() {
-      baseAccountId = null;
-      loading = true;
-      suggestions = <Account>[];
-    });
-    var dio = Dio();
-    var header = ListAccountRequest(name: query, pageNumber: 1, pageSize: 10);
-    dio
-        .get("${host}Account/List", options: Options(headers: header.toJson()))
-        .then((value) {
-      var response =
-          ApiPagingResponse<Account>.fromJson(value.data, Account.fromJson);
-      setState(() {
-        suggestions = response.data
-                ?.where(
-                    (x) => x.name.toLowerCase().contains(query.toLowerCase()))
-                .toList() ??
-            <Account>[];
-        loading = false;
-      });
-      return suggestions
-          .map((e) => SearchFieldListItem<Account>(e.name, item: e))
-          .toList();
-    }).onError((error, stackTrace) {
-      setState(() => loading = false);
-      return <SearchFieldListItem<Account>>[];
-    });
-    return null;
+    baseAccountId = null;
+    suggestions = baseAccounts
+        .where((x) => x.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    return suggestions
+        .map((e) => SearchFieldListItem<Account>(e.name, item: e))
+        .toList();
   }
 }

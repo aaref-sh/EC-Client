@@ -3,6 +3,7 @@ import 'package:tt/components/base_route.dart';
 import 'package:tt/components/dialog.dart';
 import 'package:tt/components/list_table.dart';
 import 'package:tt/components/search_bar.dart';
+import 'package:tt/enums/server_enums.dart';
 import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
@@ -23,7 +24,7 @@ class _VouchersState extends State<Vouchers> {
   Widget build(BuildContext context) {
 // future builder to fetch data from server
     return BaseRout(
-      routeName: resRepos,
+      routeName: resVouchers,
       child: FutureBuilder<List<VoucherViewModel>>(
           future: fetchFromServer<VoucherViewModel>(
               controller: "Voucher",
@@ -56,8 +57,8 @@ class _VouchersState extends State<Vouchers> {
         CustomSearchBar(
           controller: searchController,
           onSearchPressed: () {
-            // Define what should happen when the button is pressed
-            print('Search button was pressed!');
+            var x =
+                VoucherViewModelApiPagingRequest(pageNumber: 1, pageSize: 10);
           },
         )
       ],
@@ -72,6 +73,15 @@ class _VouchersState extends State<Vouchers> {
 }
 
 class VoucherViewModelApiPagingRequest extends ApiPagingRequest {
-  VoucherViewModelApiPagingRequest(
-      {required super.pageNumber, required super.pageSize});
+  VoucherType? type;
+  DateTime? voucherDate;
+  int? debit;
+
+  VoucherViewModelApiPagingRequest({
+    required super.pageNumber,
+    required super.pageSize,
+    this.type,
+    this.debit,
+    this.voucherDate,
+  });
 }

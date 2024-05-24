@@ -1,7 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tt/helpers/settings.dart';
+import 'package:tt/models/account.dart';
 import 'package:tt/routes/home.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  Dio dio = Dio();
+  dio.get("${host}Account/GetBaseAccounts").then((value) {
+    baseAccounts = List<Account>.from(value.data['data'].entries
+        .map((x) => Account(id: x.value, name: x.key))
+        .toList());
+  }).onError((error, stackTrace) => null);
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

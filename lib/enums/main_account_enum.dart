@@ -1,19 +1,5 @@
-enum MainAccount {
-  fixedAssets,
-  funds,
-  banks,
-  customers,
-  others,
-  goods,
-  capital,
-  profitsAndLosses,
-  withdrawals,
-  contributors,
-  suppliers,
-  fixedCommitments,
-  inventorySettlement,
-  damagedGoods,
-  activityExpenses,
-}
+enum InvoiceType { sell, buy }
+
+enum PayType { direct, latter }
 
 enum SellingType { item, package, kg, gram }

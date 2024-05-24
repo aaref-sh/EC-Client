@@ -61,16 +61,16 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
             ),
             SearchField(
               onSearchTextChanged: onSearchTextChanged,
-              hint: resDebit,
+              hint: resFund,
               onSuggestionTap: (item) {
                 debitAccountId = item.item?.id;
               },
               emptyWidget: autoCompshitEmptyWidget(loading),
-              suggestions: getAccountSuggestions(),
+              suggestions: getAccountSuggestions(showFund: true),
             ),
             SearchField(
               onSearchTextChanged: onSearchTextChanged,
-              hint: resCredit,
+              hint: resAccount,
               onSuggestionTap: (item) {
                 creditAccountId = item.item?.id;
               },
@@ -121,7 +121,8 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
     );
   }
 
-  List<SearchFieldListItem<Account>> getAccountSuggestions() {
+  List<SearchFieldListItem<Account>> getAccountSuggestions(
+      {bool showFund = false}) {
     return suggestions
         .map((e) => SearchFieldListItem<Account>(e.name, item: e))
         .toList();
