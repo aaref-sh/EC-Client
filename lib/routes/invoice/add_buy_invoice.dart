@@ -14,11 +14,11 @@ import 'package:tt/models/invoice.dart';
 import 'package:tt/models/material.dart';
 import 'package:vtable/vtable.dart';
 
-class AddInvoice extends StatefulWidget {
-  const AddInvoice({super.key});
+class AddBuyInvoice extends StatefulWidget {
+  const AddBuyInvoice({super.key});
 
   @override
-  State<AddInvoice> createState() => _AddInvoiceState();
+  State<AddBuyInvoice> createState() => _AddBuyInvoiceState();
 }
 
 Invoice newInvoice = Invoice(
@@ -32,7 +32,7 @@ Invoice newInvoice = Invoice(
   xItems: [],
 );
 
-class _AddInvoiceState extends State<AddInvoice> {
+class _AddBuyInvoiceState extends State<AddBuyInvoice> {
   var searchController = TextEditingController();
 
   @override
@@ -111,14 +111,13 @@ class AddInvoiceItem extends StatefulWidget {
 }
 
 class _AddInvoiceItemState extends State<AddInvoiceItem> {
-  PickMaterial? material;
+  Materiale? material;
   var quantityController = TextEditingController();
   var unitPriceController = TextEditingController();
   var notesController = TextEditingController();
-  var discountController = TextEditingController();
   var totalPriceController = TextEditingController();
   bool loading = false;
-  var suggestions = <PickMaterial>[];
+  var suggestions = <Materiale>[];
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -159,27 +158,10 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
             ),
           ],
         ),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  totalPriceController.text = calculateTotalPrice().toString();
-                },
-                decoration: InputDecoration(labelText: resDiscount),
-                controller: discountController,
-              ),
-            ),
-            gap(8),
-            Expanded(
-              child: TextField(
-                enabled: false,
-                decoration: InputDecoration(labelText: resTotalPrice),
-                controller: totalPriceController,
-              ),
-            ),
-          ],
+        TextField(
+          enabled: false,
+          decoration: InputDecoration(labelText: resTotalPrice),
+          controller: totalPriceController,
         ),
         TextField(
           decoration: InputDecoration(labelText: resNotes),
@@ -189,26 +171,47 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
         ElevatedButton(
             onPressed: () {
               // validate fields
-              if (material == null ||
-                  quantityController.text.isEmpty ||
-                  unitPriceController.text.isEmpty) {
-                // show snackbar
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(resAllFieldsRequired),
-                  duration: Duration(seconds: 2),
-                ));
-                return;
+              // if (material == null ||
+              //     quantityController.text.isEmpty ||
+              //     unitPriceController.text.isEmpty) {
+              //   // show snackbar
+              //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              //     content: Text(resAllFieldsRequired),
+              //     duration: Duration(seconds: 2),
+              //   ));
+              //   return;
+              // }
+              if (material?.id == null) {
+                var a = () => showDialogBox(context, Placeholder());
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (builder) {
+                      return AlertDialog(
+                        content: Text('لا يوجد سجل للمادة، هل تريد الإضافة؟'),
+                        actions: [
+                          ElevatedButton(onPressed: a, child: Text(resYes)),
+                          ElevatedButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: Text(resNo))
+                        ],
+                      );
+                    }).then(
+                  (value) {
+                    if (!value) return;
+                    
+                  },
+                );
               }
-              if (material?.materialId == null) {}
-              var item = Item(
-                  amount: int.parse(quantityController.text),
-                  discount: double.parse(discountController.text),
-                  unitPrice: double.parse(unitPriceController.text),
-                  notes: notesController.text,
-                  materialId: material!.materialId,
-                  materialName: material!.materialName);
+              // var item = Item(
+              //     amount: int.parse(quantityController.text),
+              //     unitPrice: double.parse(unitPriceController.text),
+              //     notes: notesController.text,
+              //     materialId: material!.id,
+              //     discount: 0,
+              //     materialName: material!.name);
 
-              newInvoice.items.add(item);
+              // newInvoice.items.add(item);
             },
             child: Text(resAdd))
       ],
@@ -217,31 +220,26 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
 
   double calculateTotalPrice() =>
       ((double.tryParse(unitPriceController.text) ?? 0) *
-              (double.tryParse(quantityController.text) ?? 0) -
-          (double.tryParse(discountController.text) ?? 0));
+          (double.tryParse(quantityController.text) ?? 0));
 
-  List<SearchFieldListItem<PickMaterial>> getAccountSuggestions() {
+  List<SearchFieldListItem<Materiale>> getAccountSuggestions() {
     return suggestions
-        .map((e) => SearchFieldListItem<PickMaterial>(e.materialName,
-            item: e,
-            child: CuteListTile(
-              material: e,
-            )))
+        .map((e) => SearchFieldListItem<Materiale>(e.name, item: e))
         .toList();
   }
 
-  List<SearchFieldListItem<PickMaterial>>? onSearchTextChanged(String query) {
+  List<SearchFieldListItem<Materiale>>? onSearchTextChanged(String query) {
     if (query.length > 1) {
       setState(() {
         material = null;
         loading = true;
-        suggestions = <PickMaterial>[];
+        suggestions = <Materiale>[];
       });
       fetchFromServer(
               controller: "Material",
-              fromJson: PickMaterial.fromJson,
-              headers: PickMaterialRequest(name: query),
-              action: "Pick")
+              fromJson: Materiale.fromJson,
+              headers: MaterialApiPagingRequest(
+                  name: query, pageNumber: 1, pageSize: 10))
           .then((value) {
         suggestions = value;
         setState(() => loading = false);
@@ -251,54 +249,9 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
       });
     }
     return suggestions
-        .map((e) => SearchFieldListItem<PickMaterial>(e.materialName,
-            item: e, child: CuteListTile(material: e)))
+        .map((e) => SearchFieldListItem<Materiale>(e.name, item: e))
         .toList();
   }
 }
 
 SizedBox gap(double x) => SizedBox(width: x, height: x);
-
-class CuteListTile extends StatelessWidget {
-  final PickMaterial material;
-
-  CuteListTile({required this.material});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.pink, // Choose a cute color!
-        child: Text(
-          material.materialName[0].toUpperCase(),
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      title: Text(
-        material.materialName,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(material.buyDate),
-      trailing: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Repo: ${material.repositoryName}',
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey,
-            ),
-          ),
-          gap(4),
-          Text(
-            '\$${material.amount}',
-            style: TextStyle(
-              color: Colors.green,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

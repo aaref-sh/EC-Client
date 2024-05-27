@@ -8,6 +8,7 @@ import 'package:tt/helpers/resources.dart';
 import 'package:tt/routes/category/add_category.dart';
 import 'package:tt/routes/category/categories.dart';
 import 'package:tt/routes/debit_credit/accounts.dart';
+import 'package:tt/routes/invoice/add_buy_invoice.dart';
 import 'package:tt/routes/invoice/add_invoice.dart';
 import 'package:tt/routes/material/add_material.dart';
 import 'package:tt/routes/material/materials.dart';
@@ -139,6 +140,13 @@ class _HomePageState extends State<HomePage> {
                     title: Text(resNewInvoice),
                     onTap: () {
                       navigateTo(context, to: AddInvoice());
+                    },
+                  ),
+                  ListTile(
+                    visualDensity: VisualDensity(vertical: -4), // to compact
+                    title: Text(resNewBuyInvoice),
+                    onTap: () {
+                      navigateTo(context, to: AddBuyInvoice());
                     },
                   ),
                 ],

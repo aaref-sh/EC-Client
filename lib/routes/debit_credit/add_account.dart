@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
@@ -35,7 +37,7 @@ class _AddAccountState extends State<AddAccount> {
       child: Column(
         children: [
           TextFormField(
-            decoration: InputDecoration(labelText: resName),
+            decoration: const InputDecoration(labelText: resName),
             controller: nameController,
           ),
           SearchField(
@@ -46,13 +48,13 @@ class _AddAccountState extends State<AddAccount> {
             suggestions: getAccountSuggestions(),
           ),
           TextFormField(
-            decoration: InputDecoration(labelText: resNotes),
+            decoration: const InputDecoration(labelText: resNotes),
             controller: notesController,
           ),
           const SizedBox(height: 5),
           ElevatedButton(
               onPressed: () async {
-                if (nameController.text.isEmpty) {
+                if (nameController.text.isEmpty || baseAccountId == null) {
                   showErrorMessage(context, resAllFieldsRequired);
                   return;
                 }
@@ -61,7 +63,6 @@ class _AddAccountState extends State<AddAccount> {
                 dio.options.headers['Content-Type'] = 'application/json';
                 var cat = Account(
                     id: -1,
-                    isLeaf: true,
                     name: nameController.text,
                     notes: notesController.text,
                     baseAccountId: baseAccountId);
@@ -78,11 +79,9 @@ class _AddAccountState extends State<AddAccount> {
                   // show toast error message
                   hideLoadingPanel(context);
                   showErrorMessage(context, resError);
-
-                  print(e);
                 }
               },
-              child: Text(resAdd))
+              child: const Text(resAdd))
         ],
       ),
     );

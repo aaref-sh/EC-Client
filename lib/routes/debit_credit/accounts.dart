@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:tt/components/base_route.dart';
 import 'package:tt/components/dialog.dart';
 import 'package:tt/components/search_bar.dart';
@@ -46,16 +44,15 @@ class _AccountsState extends State<Accounts> {
       actions: [
         IconButton(
             onPressed: () {
-              showDialogBox(context, AddAccount());
+              showDialogBox(context, const AddAccount());
             },
-            icon: Icon(Icons.add))
+            icon: const Icon(Icons.add))
       ],
       filterWidgets: [
         CustomSearchBar(
           controller: searchController,
           onSearchPressed: () {
             // Define what should happen when the button is pressed
-            print('Search button was pressed!');
           },
         )
       ],

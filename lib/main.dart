@@ -6,7 +6,8 @@ import 'package:tt/routes/home.dart';
 
 void main() {
   Dio dio = Dio();
-  dio.get("${host}Account/GetBaseAccounts").then((value) {
+  dio.options.headers.addAll(ListAccountRequest(level: 2).toJson());
+  dio.get("${host}Account/List").then((value) {
     baseAccounts = List<Account>.from(value.data['data'].entries
         .map((x) => Account(id: x.value, name: x.key))
         .toList());

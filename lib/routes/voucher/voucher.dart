@@ -29,7 +29,7 @@ class _VouchersState extends State<Vouchers> {
           future: fetchFromServer<VoucherViewModel>(
               controller: "Voucher",
               fromJson: VoucherViewModel.fromJson,
-              paging: VoucherViewModelApiPagingRequest(
+              headers: VoucherViewModelApiPagingRequest(
                   pageNumber: 1, pageSize: 10)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {

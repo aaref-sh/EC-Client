@@ -135,7 +135,7 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
       suggestions = <Account>[];
     });
     var dio = Dio();
-    var header = ListAccountRequest(name: query, pageNumber: 1, pageSize: 10);
+    var header = ListAccountRequest(name: query, level: 2);
     dio
         .get("${host}Account/List", options: Options(headers: header.toJson()))
         .then((value) {

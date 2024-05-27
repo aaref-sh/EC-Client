@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tt/components/bottom_sheet.dart';
 import 'package:tt/helpers/resources.dart';
@@ -124,6 +126,17 @@ class MaterialApiPagingRequest extends ApiPagingRequest {
   }
 }
 
+class PickMaterialRequest extends ApiRequest {
+  String name;
+  int? categoryId;
+  PickMaterialRequest({required this.name, this.categoryId});
+  @override
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'categpryId': categoryId,
+      };
+}
+
 class PickMaterial {
   final int materialId;
   final String materialName;
@@ -132,6 +145,7 @@ class PickMaterial {
   final int id;
   final String buyDate;
   final double amount;
+  final double price;
 
   PickMaterial({
     required this.materialId,
@@ -141,6 +155,7 @@ class PickMaterial {
     required this.id,
     required this.buyDate,
     required this.amount,
+    required this.price,
   });
 
   factory PickMaterial.fromJson(Map<String, dynamic> json) {
@@ -152,6 +167,7 @@ class PickMaterial {
       id: json['id'] as int,
       buyDate: json['buyDate'] as String,
       amount: json['amount'] as double,
+      price: json['price'] as double,
     );
   }
 

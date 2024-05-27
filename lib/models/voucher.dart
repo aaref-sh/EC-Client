@@ -195,16 +195,21 @@ class ApiPagingResponse<T> {
     );
   }
 }
+
 // Dart does not have attributes like C#'s FromHeader and Range,
 // so you would handle validation and header extraction manually.
+class ApiRequest {
+  Map<String, dynamic> toJson() => {};
+}
 
-class ApiPagingRequest {
+class ApiPagingRequest extends ApiRequest {
   int pageNumber;
   int pageSize;
 
   ApiPagingRequest({required this.pageNumber, required this.pageSize});
 
   // toJson method
+  @override
   Map<String, dynamic> toJson() => {
         'pageNumber': pageNumber,
         'pageSize': pageSize,

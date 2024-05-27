@@ -27,7 +27,7 @@ class _MaterialsState extends State<Materials> {
           future: fetchFromServer(
               controller: "Material",
               fromJson: Materiale.fromJson,
-              paging: MaterialApiPagingRequest(pageNumber: 1, pageSize: 10)),
+              headers: MaterialApiPagingRequest(pageNumber: 1, pageSize: 10)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return createTable(snapshot.data!);

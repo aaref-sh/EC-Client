@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tt/components/bottom_sheet.dart';
 import 'package:tt/helpers/resources.dart';
-import 'package:tt/models/voucher.dart';
 import 'package:vtable/vtable.dart';
 
 class Account {
@@ -9,13 +8,8 @@ class Account {
   String name;
   String? notes;
   int? baseAccountId;
-  bool isLeaf;
   Account(
-      {required this.id,
-      required this.name,
-      this.notes,
-      this.baseAccountId,
-      this.isLeaf = true});
+      {required this.id, required this.name, this.notes, this.baseAccountId});
 
   factory Account.fromJson(Map<String, dynamic> json) {
     return Account(
@@ -23,7 +17,6 @@ class Account {
       name: json['name'] as String,
       notes: json['notes'] as String?,
       baseAccountId: json['baseAccountId'] as int?,
-      isLeaf: json['isLeaf'] ?? false,
     );
   }
 
@@ -33,7 +26,6 @@ class Account {
       'name': name,
       'notes': notes,
       'baseAccountId': baseAccountId,
-      'isLeaf': isLeaf,
     };
   }
 
@@ -83,25 +75,23 @@ class Account {
   }
 }
 
-class ListAccountRequest extends ApiPagingRequest {
-  String name;
+class ListAccountRequest {
+  String? name;
   int? type;
   int? baseAccountId;
-
+  int level;
   // constructor
-  ListAccountRequest(
-      {required this.name,
-      this.type,
-      this.baseAccountId,
-      required super.pageNumber,
-      required super.pageSize});
+  ListAccountRequest({
+    this.name,
+    required this.level,
+    this.type,
+    this.baseAccountId,
+  });
 
   // toJson method
   Map<String, dynamic> toJson() => {
         "name": name,
         "type": type,
         "baseAccountId": baseAccountId,
-        "pageNumber": pageNumber,
-        "pageSize": pageSize
       };
 }

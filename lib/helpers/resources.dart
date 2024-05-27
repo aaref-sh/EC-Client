@@ -38,4 +38,5 @@ const resQuantity = "الكمية";
 const resPrice = "السعر";
 const resTotalPrice = "السعر الإجمالي";
 const resNewInvoice = 'إنشاء فاتورة';
+const resNewBuyInvoice = "فاتورة شراء";
 const resDiscount = 'الخصم';

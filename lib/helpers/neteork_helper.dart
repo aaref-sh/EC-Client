@@ -10,18 +10,18 @@ Future<Response<dynamic>> sendPost(String controller, Object object) {
   return dio.post("${host}${controller}/Create", data: object);
 }
 
-Future<List<T>> fetchFromServer<T>({
-  required String controller,
-  required T Function(Map<String, dynamic>) fromJson,
-  required ApiPagingRequest paging,
-}) async {
+Future<List<T>> fetchFromServer<T>(
+    {required String controller,
+    required T Function(Map<String, dynamic>) fromJson,
+    required ApiRequest headers,
+    String action = "List"}) async {
   var dio = Dio();
   dio.options.headers['Content-Type'] = 'application/json';
   dio.options.headers['Accept'] = 'application/json';
   dio.options.headers['Authorization'] = 'Bearer ';
-  dio.options.headers.addAll(paging.toJson());
+  dio.options.headers.addAll(headers.toJson());
 
-  var response = await dio.get("$host$controller/List");
+  var response = await dio.get("$host$controller/$action");
   var data = ApiPagingResponse.fromJson(response.data, fromJson);
   return data.data!;
 }
