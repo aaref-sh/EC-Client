@@ -9,6 +9,7 @@ import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/account.dart';
 import 'package:tt/helpers/functions.dart';
+import 'package:tt/models/account_type.dart';
 
 class AddAccount extends StatefulWidget {
   const AddAccount({super.key});
@@ -87,16 +88,16 @@ class _AddAccountState extends State<AddAccount> {
     );
   }
 
-  List<SearchFieldListItem<Account>> getAccountSuggestions() {
-    return suggestions
-        .map((e) => SearchFieldListItem<Account>(e.name, item: e))
-        .toList();
-  }
+  List<SearchFieldListItem<Account>> getAccountSuggestions() => suggestions
+      .map((e) => SearchFieldListItem<Account>(e.name, item: e))
+      .toList();
 
-  List<SearchFieldListItem<Account>>? onSearchTextChanged(query) {
+  List<SearchFieldListItem<Account>>? onSearchTextChanged(String query) {
     baseAccountId = null;
     suggestions = baseAccounts
-        .where((x) => x.name.toLowerCase().contains(query.toLowerCase()))
+        .where((x) =>
+            x.baseAccountId != null &&
+            x.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
     return suggestions

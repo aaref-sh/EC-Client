@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tt/components/bottom_sheet.dart';
+import 'package:tt/components/gap.dart';
+import 'package:tt/components/modal_dialog.dart';
+import 'package:tt/helpers/functions.dart';
+import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/models/voucher.dart';
 import 'package:vtable/vtable.dart';
@@ -57,7 +61,7 @@ class Repository {
         renderFunction: (context, object, out) {
           return GestureDetector(
               onTap: () {
-                showBottomDrawer(context, object.id, "Repository");
+                showBottomDrawer(context, object.id, "Repository", obj: object);
               },
               child: Icon(Icons.more_horiz));
         },
@@ -65,9 +69,71 @@ class Repository {
       ),
     ];
   }
+
+  Widget editDialog(BuildContext context) => RepositoryEditDialog(item: this);
 }
 
-class RepositoryApiPagingRequest extends ApiPagingRequest {
-  RepositoryApiPagingRequest(
-      {required super.pageNumber, required super.pageSize});
+class RepositoryEditDialog extends StatefulWidget {
+  final Repository item;
+  const RepositoryEditDialog({super.key, required this.item});
+  @override
+  State<RepositoryEditDialog> createState() => _RepositoryEditDialogState();
+}
+
+class _RepositoryEditDialogState extends State<RepositoryEditDialog> {
+  late TextEditingController name;
+  late TextEditingController notes;
+  @override
+  void initState() {
+    super.initState();
+    name = TextEditingController(text: widget.item.name);
+    notes = TextEditingController(text: widget.item.notes);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(
+          decoration: InputDecoration(labelText: resName),
+          controller: name,
+        ),
+        TextField(
+          decoration: InputDecoration(labelText: resNotes),
+          controller: notes,
+        ),
+        gap(5),
+        ElevatedButton(
+            onPressed: () async {
+              // fields validation
+              if (name.text.isEmpty) {
+                showErrorMessage(context, resAllFieldsRequired);
+                return;
+              }
+              widget.item.notes = notes.text;
+              widget.item.name = name.text;
+              try {
+                showLoadingPanel(context);
+                var response = await sendPut('Repository', widget.item);
+                if (response.statusCode == 200) {
+                  hideLoadingPanel(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  showErrorMessage(context, resDone);
+                }
+              } catch (e) {
+                hideLoadingPanel(context);
+                showErrorMessage(context, resError);
+              }
+            },
+            child: Text(resSave))
+      ],
+    );
+  }
+}
+
+class RepositoryApiPagingRequest extends ApiRequest {
+  String? name;
+
+  RepositoryApiPagingRequest({this.name});
 }

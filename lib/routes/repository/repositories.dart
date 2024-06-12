@@ -27,7 +27,7 @@ class _RepositoriesState extends State<Repositories> {
           future: fetchFromServer<Repository>(
               controller: "Repository",
               fromJson: Repository.fromJson,
-              headers: RepositoryApiPagingRequest(pageNumber: 1, pageSize: 10)),
+              headers: RepositoryApiPagingRequest(name: searchController.text)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return createTable(snapshot.data!);

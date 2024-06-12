@@ -1,12 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tt/components/dialog.dart';
 import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/functions.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
+import 'package:tt/models/account.dart';
 
 void showBottomDrawer(BuildContext context, int id, String controller,
-    {bool withDelete = true}) {
+    {bool withDelete = true, dynamic obj = null}) {
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
@@ -19,64 +21,15 @@ void showBottomDrawer(BuildContext context, int id, String controller,
             const Text("", style: TextStyle(fontSize: 20)),
             !withDelete
                 ? Container()
-                : ListTile(
-                    iconColor: Colors.red[900],
-                    leading: Icon(Icons.delete),
-                    title: Text(
-                      resDelete,
-                      style: TextStyle(fontSize: 20, color: Colors.red[900]),
-                    ),
-                    onTap: () async {
-                      try {
-                        // delete confirmation dialog
-                        var result = await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(resDelete),
-                                content: Text(resDeleteConfirm),
-                                actions: [
-                                  TextButton(
-                                    child: Text(resYes),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(true);
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: Text(resNo),
-                                    onPressed: () {
-                                      Navigator.of(context).pop(false);
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                        if (result) {
-                          showLoadingPanel(context);
-                          try {
-                            // delete the item
-                            var response = await dio
-                                .delete('${host}${controller}/delete/${id}');
-                            if (response.statusCode == 200) {
-                              hideLoadingPanel(context);
-                              showErrorMessage(context, resDone);
-                            }
-                          } catch (e) {
-                            hideLoadingPanel(context);
-                            showErrorMessage(context, resError);
-                          }
-                        }
-                      } catch (e) {}
-                    },
-                  ),
+                : deleteItem(context, dio, controller, id),
             ListTile(
-              leading: Icon(Icons.edit),
-              title: Text(
+              leading: const Icon(Icons.edit),
+              title: const Text(
                 resEdit,
                 style: TextStyle(fontSize: 20),
               ),
               onTap: () {
-                showEditDialog(id, controller);
+                showEditDialog(context, obj);
               },
             ),
           ],
@@ -86,9 +39,62 @@ void showBottomDrawer(BuildContext context, int id, String controller,
   );
 }
 
-void showEditDialog(int id, String controller) {
+ListTile deleteItem(BuildContext context, Dio dio, String controller, int id) {
+  return ListTile(
+    iconColor: Colors.red[900],
+    leading: Icon(Icons.delete),
+    title: Text(
+      resDelete,
+      style: TextStyle(fontSize: 20, color: Colors.red[900]),
+    ),
+    onTap: () async {
+      try {
+        // delete confirmation dialog
+        var result = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(resDelete),
+                content: Text(resDeleteConfirm),
+                actions: [
+                  TextButton(
+                    child: Text(resYes),
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                  TextButton(
+                    child: Text(resNo),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ],
+              );
+            });
+        if (result) {
+          showLoadingPanel(context);
+          try {
+            // delete the item
+            var response =
+                await dio.delete('${host}${controller}/delete/${id}');
+            if (response.statusCode == 200) {
+              hideLoadingPanel(context);
+              showErrorMessage(context, resDone);
+            }
+          } catch (e) {
+            hideLoadingPanel(context);
+            showErrorMessage(context, resError);
+          }
+        }
+      } catch (e) {}
+    },
+  );
+}
+
+void showEditDialog<T>(BuildContext context, dynamic obj) {
   // get data from server
-  var dio = Dio();
-  dio.options.headers['content-type'] = 'application/json; charset=UTF-8';
-  var response = dio.get("${host}${controller}/");
+  var nameController = TextEditingController();
+  nameController.text = obj.name;
+  showDialogBox(context, obj.editDialog(context));
 }

@@ -5,11 +5,11 @@ import 'package:flutter/widgets.dart';
 import 'package:searchfield/searchfield.dart';
 import 'package:tt/components/base_route.dart';
 import 'package:tt/components/dialog.dart';
+import 'package:tt/components/gap.dart';
 import 'package:tt/components/list_table.dart';
 import 'package:tt/enums/main_account_enum.dart';
 import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
-import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/invoice.dart';
 import 'package:tt/models/material.dart';
 import 'package:vtable/vtable.dart';
@@ -28,6 +28,7 @@ Invoice newInvoice = Invoice(
   payType: PayType.direct,
   clientAccountId: 0,
   cashAccountId: 0,
+  repositoryId: 0,
   items: [],
   xItems: [],
 );
@@ -256,8 +257,6 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
         .toList();
   }
 }
-
-SizedBox gap(double x) => SizedBox(width: x, height: x);
 
 class CuteListTile extends StatelessWidget {
   final PickMaterial material;

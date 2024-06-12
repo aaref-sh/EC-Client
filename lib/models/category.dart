@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:searchfield/searchfield.dart';
 import 'package:tt/components/bottom_sheet.dart';
+import 'package:tt/components/gap.dart';
+import 'package:tt/components/list_table.dart';
+import 'package:tt/components/modal_dialog.dart';
+import 'package:tt/helpers/functions.dart';
+import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/models/category_group.dart';
 import 'package:tt/models/voucher.dart';
@@ -11,11 +17,12 @@ class Category {
   int id;
   String name;
   int? baseCategoryId;
-
+  String? baseCategoryName;
   Category({
     this.id = -1,
     required this.name,
     this.baseCategoryId,
+    this.baseCategoryName,
   });
   @override
   String toString() => name;
@@ -29,6 +36,7 @@ class Category {
         id: json['id'],
         name: json['name'],
         baseCategoryId: json['baseCategoryId'],
+        baseCategoryName: json['baseCategoryName'],
       );
   static List<Category> fromJsonList(List<Map<String, dynamic>> json) {
     List<Category> categories = [];
@@ -59,19 +67,107 @@ class Category {
         // validators: [SampleRowData.validateGravity],
       ),
       VTableColumn(
+        label: resBaseCategory,
+        width: (width * 4 / 12).round(),
+        alignment: Alignment.center,
+        transformFunction: (row) => row.baseCategoryName ?? "",
+        compareFunction: (a, b) =>
+            (a.baseCategoryName ?? "").compareTo(b.baseCategoryName ?? ""),
+        // validators: [SampleRowData.validateGravity],
+      ),
+      VTableColumn(
         label: '',
         width: (width * 1 / 12).round(),
         alignment: Alignment.center,
         renderFunction: (context, object, out) {
           return GestureDetector(
               onTap: () {
-                showBottomDrawer(context, object.id, "Category");
+                showBottomDrawer(context, object.id, "Category", obj: object);
               },
               child: Icon(Icons.more_horiz));
         },
         // validators: [SampleRowData.validateGravity],
       ),
     ];
+  }
+
+  Widget editDialog(BuildContext context) => CategoryEditDialog(item: this);
+}
+
+class CategoryEditDialog extends StatefulWidget {
+  final Category item;
+  const CategoryEditDialog({super.key, required this.item});
+
+  @override
+  State<CategoryEditDialog> createState() => _CategoryEditDialogState();
+}
+
+class _CategoryEditDialogState extends State<CategoryEditDialog> {
+  late TextEditingController name;
+  late TextEditingController notes;
+  var loading = false;
+  int? baseCategoryId;
+  var isOrganizal = false;
+  var suggestions = <Category>[];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(
+          decoration: InputDecoration(labelText: resName),
+          controller: name,
+        ),
+        SearchField(
+            onSearchTextChanged: searchTextChange,
+            hint: resBaseAccount,
+            onSuggestionTap: (item) {
+              baseCategoryId = item.item?.id;
+            },
+            controller: TextEditingController(
+                text: suggestions
+                    .where((a) => a.id == baseCategoryId)
+                    .firstOrNull
+                    ?.name),
+            emptyWidget: autoCompshitEmptyWidget(loading),
+            suggestions: getAccountSuggestions()),
+        gap(5),
+        ElevatedButton(
+            onPressed: () async {
+              // fields validation
+              if (name.text.isEmpty) {
+                showErrorMessage(context, resAllFieldsRequired);
+                return;
+              }
+              widget.item.name = name.text;
+              widget.item.baseCategoryId = baseCategoryId;
+              try {
+                showLoadingPanel(context);
+                var response = await sendPut('Account', widget.item);
+                if (response.statusCode == 200) {
+                  hideLoadingPanel(context);
+                  hideLoadingPanel(context);
+                  showErrorMessage(context, resDone);
+                }
+              } catch (e) {
+                hideLoadingPanel(context);
+                showErrorMessage(context, resError);
+              }
+            },
+            child: Text(resSave))
+      ],
+    );
+  }
+
+  List<SearchFieldListItem<Category>> getAccountSuggestions() {
+    return suggestions
+        .map((e) => SearchFieldListItem<Category>(e.name, item: e))
+        .toList();
+  }
+
+  List<SearchFieldListItem<Category>>? searchTextChange(String query) {
+    suggestions = suggestions.where((e) => e.name.contains(query)).toList();
+    return getAccountSuggestions();
   }
 }
 

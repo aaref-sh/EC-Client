@@ -61,10 +61,8 @@ class _AddCategoryState extends State<AddCategory> {
                       await dio.post("${host}Category/Create", data: cat);
                   if (response.statusCode == 200) {
                     hideLoadingPanel(context);
+                    hideLoadingPanel(context);
                     showErrorMessage(context, resDone);
-                    // clear fields
-                    nameController.clear();
-                    _parentCategory = null;
                   }
                 } catch (e) {
                   hideLoadingPanel(context);

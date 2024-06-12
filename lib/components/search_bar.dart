@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:tt/helpers/resources.dart';
 
 class CustomSearchBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSearchPressed;
 
-  CustomSearchBar({required this.controller, required this.onSearchPressed});
+  const CustomSearchBar(
+      {super.key, required this.controller, required this.onSearchPressed});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 170,
-      padding: EdgeInsets.symmetric(horizontal: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(30),
@@ -18,11 +20,18 @@ class CustomSearchBar extends StatelessWidget {
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
-          hintText: 'Search',
-          border: InputBorder.none,
-          prefixIcon:
-              IconButton(icon: Icon(Icons.search), onPressed: onSearchPressed),
-        ),
+            hintText: resSearch,
+            border: InputBorder.none,
+            prefixIcon: IconButton(
+                icon: const Icon(Icons.search), onPressed: onSearchPressed),
+            suffix: controller.text.isEmpty
+                ? null
+                : GestureDetector(
+                    onTap: () {
+                      controller.clear();
+                      onSearchPressed();
+                    },
+                    child: const Icon(Icons.close, size: 16))),
       ),
     );
   }

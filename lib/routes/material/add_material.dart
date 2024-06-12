@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:tt/components/list_table.dart';
 import 'package:tt/components/modal_dialog.dart';
+import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/category.dart';
@@ -43,7 +45,7 @@ class _AddMaterialState extends State<AddMaterial> {
               categoryName = null;
               categoryId = item.item?.id;
             },
-            emptyWidget: autoCompshitEmptyWidget(),
+            emptyWidget: autoCompshitEmptyWidget(loading),
             suggestions: getCategorySuggestions(),
           ),
           TextFormField(
@@ -58,9 +60,6 @@ class _AddMaterialState extends State<AddMaterial> {
           ElevatedButton(
               onPressed: () async {
                 if (nameController.text.isEmpty) return;
-                var dio = Dio();
-                dio.options.headers['Authorization'] = 'Bearer ';
-                dio.options.headers['Content-Type'] = 'application/json';
                 var cat = models.Materiale(
                     id: -1,
                     name: nameController.text,
@@ -69,8 +68,7 @@ class _AddMaterialState extends State<AddMaterial> {
                     notes: notesController.text,
                     code: codeController.text);
                 try {
-                  var response =
-                      await dio.post("${host}Material/Create", data: cat);
+                  var response = await sendPost("Material", cat);
                   if (response.statusCode == 200) {
                     nameController.text = notesController.text = '';
                     codeController.text = categoryName = '';
@@ -99,31 +97,23 @@ class _AddMaterialState extends State<AddMaterial> {
         .toList();
   }
 
-  List<SearchFieldListItem<Category>>? onSearchTextChanged(query) {
+  List<SearchFieldListItem<Category>>? onSearchTextChanged(String query) {
     setState(() {
       categoryName = query;
       categoryId = null;
       loading = true;
       suggestions = <Category>[];
     });
-    var dio = Dio();
     var header = ListCategoryRequest(name: query, pageNumber: 1, pageSize: 7);
-    dio
-        .get(
-      "${host}Category/List",
-      options: Options(
-        headers: {"request": header.toJson()},
-      ),
-    )
+    fetchFromServer(
+            controller: "Category",
+            fromJson: Category.fromJson,
+            headers: header)
         .then((value) {
-      var response =
-          ApiPagingResponse<Category>.fromJson(value.data, Category.fromJson);
       setState(() {
-        suggestions = response.data
-                ?.where(
-                    (x) => x.name.toLowerCase().contains(query.toLowerCase()))
-                .toList() ??
-            <Category>[];
+        suggestions = value
+            .where((x) => x.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
         loading = false;
       });
       return suggestions
@@ -134,26 +124,5 @@ class _AddMaterialState extends State<AddMaterial> {
       return <SearchFieldListItem<Category>>[];
     });
     return null;
-  }
-
-  SizedBox autoCompshitEmptyWidget() {
-    return SizedBox(
-        height: 100,
-        child: Center(
-            child: !loading
-                ? const Text("No data")
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                              color:
-                                  Colors.deepPurple[900]?.toMaterialColor())),
-                      const SizedBox(width: 10),
-                      const Text("Loading ...")
-                    ],
-                  )));
   }
 }

@@ -12,12 +12,8 @@ import 'package:tt/routes/invoice/add_buy_invoice.dart';
 import 'package:tt/routes/invoice/add_invoice.dart';
 import 'package:tt/routes/material/add_material.dart';
 import 'package:tt/routes/material/materials.dart';
-import 'package:tt/routes/purchases/add_purchase.dart';
-import 'package:tt/routes/purchases/purchases.dart';
 import 'package:tt/routes/repository/add_repository.dart';
 import 'package:tt/routes/repository/repositories.dart';
-import 'package:tt/routes/sell/add_sell.dart';
-import 'package:tt/routes/sell/sell.dart';
 import 'package:tt/routes/voucher/add_voucher.dart';
 import 'package:tt/routes/voucher/voucher.dart';
 
@@ -53,16 +49,16 @@ class _HomePageState extends State<HomePage> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MainScreenButton(resPurchases,
-                      Icons.add_shopping_cart_outlined, Purchase(),
-                      addWidget: AddForwardPurchase()),
-                  MainScreenButton(resSells, Icons.paid_outlined, Sells(),
-                      addWidget: AddSells()),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     MainScreenButton(resPurchases,
+              //         Icons.add_shopping_cart_outlined, Purchase(),
+              //         addWidget: AddForwardPurchase()),
+              //     MainScreenButton(resSells, Icons.paid_outlined, Sells(),
+              //         addWidget: AddSells()),
+              //   ],
+              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

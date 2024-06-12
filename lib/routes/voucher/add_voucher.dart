@@ -20,12 +20,20 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
   final _formKey = GlobalKey<FormState>();
   VoucherType? _selectedType;
   double? _value;
-  int? creditAccountId;
+  int? fundAccountId;
   int? debitAccountId;
 
   bool loading = false;
 
   List<Account> suggestions = [];
+
+  List<Account> fundSuggestions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadFundSeggestions();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,19 +68,26 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
               },
             ),
             SearchField(
-              onSearchTextChanged: onSearchTextChanged,
+              onSearchTextChanged: (s) {
+                return fundSuggestions
+                    .where((e) => e.name.contains(s))
+                    .map((e) => SearchFieldListItem(e.name, item: e))
+                    .toList();
+              },
               hint: resFund,
               onSuggestionTap: (item) {
-                debitAccountId = item.item?.id;
+                fundAccountId = item.item?.id;
               },
-              emptyWidget: autoCompshitEmptyWidget(loading),
-              suggestions: getAccountSuggestions(showFund: true),
+              emptyWidget: autoCompshitEmptyWidget(false),
+              suggestions: fundSuggestions
+                  .map((e) => SearchFieldListItem(e.name, item: e))
+                  .toList(),
             ),
             SearchField(
               onSearchTextChanged: onSearchTextChanged,
               hint: resAccount,
               onSuggestionTap: (item) {
-                creditAccountId = item.item?.id;
+                debitAccountId = item.item?.id;
               },
               emptyWidget: autoCompshitEmptyWidget(loading),
               suggestions: getAccountSuggestions(),
@@ -82,13 +97,13 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
                 if (_value != null &&
                     _value! > 1 &&
                     debitAccountId != null &&
-                    creditAccountId != null) {
+                    fundAccountId != null) {
                   _formKey.currentState!.save();
                   // Here you can handle the submission, for example:
                   var request = CreateVoucherRequest(
                     type: _selectedType!,
                     value: _value!,
-                    creditAccountId: creditAccountId!,
+                    creditAccountId: fundAccountId!,
                     debitAccountId: debitAccountId!,
                   );
                   showLoadingPanel(context);
@@ -98,9 +113,9 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
                       // clear fields
                       _value = null;
                       debitAccountId = null;
-                      creditAccountId = null;
-
+                      fundAccountId = null;
                       hideLoadingPanel(context);
+                      Navigator.pop(context);
                       showErrorMessage(context, resDone);
                     } else {
                       hideLoadingPanel(context);
@@ -128,25 +143,37 @@ class _AddVoucherScreenState extends State<AddVoucherScreen> {
         .toList();
   }
 
-  List<SearchFieldListItem<Account>>? onSearchTextChanged(query) {
+  void loadFundSeggestions() {
+    loading = true;
+    var header = ListAccountRequest(level: 3, baseAccountId: 11);
+    fetchFromServer(
+            controller: "Account", fromJson: Account.fromJson, headers: header)
+        .then((value) {
+      setState(() {
+        fundSuggestions = value;
+        loading = false;
+      });
+    }).onError((error, stackTrace) {
+      setState(() => loading = false);
+    });
+  }
+
+  List<SearchFieldListItem<Account>>? onSearchTextChanged(query,
+      {int? baseAccountId}) {
     setState(() {
       debitAccountId = null;
       loading = true;
       suggestions = <Account>[];
     });
-    var dio = Dio();
-    var header = ListAccountRequest(name: query, level: 2);
-    dio
-        .get("${host}Account/List", options: Options(headers: header.toJson()))
+    var header = ListAccountRequest(
+        accountName: query, level: 3, baseAccountId: baseAccountId);
+    fetchFromServer(
+            controller: "Account", fromJson: Account.fromJson, headers: header)
         .then((value) {
-      var response =
-          ApiPagingResponse<Account>.fromJson(value.data, Account.fromJson);
       setState(() {
-        suggestions = response.data
-                ?.where(
-                    (x) => x.name.toLowerCase().contains(query.toLowerCase()))
-                .toList() ??
-            <Account>[];
+        suggestions = value
+            .where((x) => x.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
         loading = false;
       });
       return suggestions

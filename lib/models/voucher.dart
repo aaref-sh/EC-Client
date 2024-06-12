@@ -50,7 +50,7 @@ class VoucherViewModel extends VoucherModel {
         debitAccountName: json['debitAccountName'],
         creditAccountName: json['creditAccountName'],
         notes: json['notes'],
-        type: VoucherType.values[json['type'] - 1],
+        type: VoucherType.values[json['type']],
         value: json['value']);
   }
 
@@ -72,17 +72,17 @@ class VoucherViewModel extends VoucherModel {
         width: width * 1 / 12,
         alignment: Alignment.center,
         renderFunction: (context, row, p2) => Icon(
-            row.type == VoucherType.payment ? Icons.download : Icons.upload),
+            row.type == VoucherType.payment ? Icons.upload : Icons.download),
       ),
       ColumnConfig(
-        label: "الدائن",
+        label: resFund,
         width: width * 3 / 12,
         alignment: Alignment.center,
         transformFunction: (row) => row.creditAccountName!,
         compareFunction: (a, b) => a.id.compareTo(b.id),
       ),
       ColumnConfig(
-        label: "مدين",
+        label: resAccount,
         width: width * 3 / 12,
         alignment: Alignment.center,
         transformFunction: (row) => row.debitAccountName!,
@@ -302,18 +302,4 @@ class TransactionItem {
       required this.credit,
       required this.accountId,
       required this.transactionId});
-}
-
-// Enum for AccountType with descriptions as comments
-enum AccountType {
-  // الأصول
-  asset,
-  // الخصوم
-  liability,
-  // الإيرادات
-  income,
-  // النفقات
-  expense,
-  // حقوق الملكية
-  equity,
 }

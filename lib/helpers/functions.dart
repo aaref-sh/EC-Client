@@ -85,3 +85,7 @@ void hideLoadingPanel(BuildContext context) {
   // pop the shown dialog
   Navigator.of(context).pop();
 }
+
+extension SumIterable on Iterable<num> {
+  num get sum => fold(0, (previous, element) => previous + element);
+}

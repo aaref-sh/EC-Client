@@ -72,16 +72,19 @@ class XItem {
 }
 
 class Invoice {
+  String person;
   InvoiceType type;
   String notes;
   double discount;
   PayType payType;
   int clientAccountId;
   int cashAccountId;
+  int repositoryId;
   List<Item> items;
   List<XItem> xItems;
 
   Invoice({
+    this.person = "me",
     required this.type,
     required this.notes,
     required this.discount,
@@ -90,15 +93,18 @@ class Invoice {
     required this.cashAccountId,
     required this.items,
     required this.xItems,
+    required this.repositoryId,
   });
 
   Map<String, dynamic> toJson() => {
+        'perso': person,
         'type': type.index,
         'notes': notes,
         'discount': discount,
         'payType': payType.index,
         'clientAccountId': clientAccountId,
         'cashAccountId': cashAccountId,
+        'repositoryId': repositoryId,
         'items': List<Map<String, dynamic>>.from(items.map((x) => x.toJson())),
         'xItems':
             List<Map<String, dynamic>>.from(xItems.map((x) => x.toJson())),
