@@ -5,7 +5,6 @@ import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/functions.dart';
 import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
-import 'package:tt/models/account.dart';
 
 void showBottomDrawer(BuildContext context, int id, String controller,
     {bool withDelete = true, dynamic obj = null}) {

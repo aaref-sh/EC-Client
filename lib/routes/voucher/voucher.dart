@@ -56,10 +56,7 @@ class _VouchersState extends State<Vouchers> {
       filterWidgets: [
         CustomSearchBar(
           controller: searchController,
-          onSearchPressed: () {
-            var x =
-                VoucherViewModelApiPagingRequest(pageNumber: 1, pageSize: 10);
-          },
+          onSearchPressed: () {},
         )
       ],
       showToolbar: showTableHeaders,

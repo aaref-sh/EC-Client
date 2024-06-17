@@ -9,7 +9,6 @@ import 'package:tt/helpers/resources.dart';
 import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/account.dart';
 import 'package:tt/helpers/functions.dart';
-import 'package:tt/models/account_type.dart';
 
 class AddAccount extends StatefulWidget {
   const AddAccount({super.key});

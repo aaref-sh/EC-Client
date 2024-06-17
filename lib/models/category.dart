@@ -7,11 +7,8 @@ import 'package:tt/components/modal_dialog.dart';
 import 'package:tt/helpers/functions.dart';
 import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
-import 'package:tt/models/category_group.dart';
 import 'package:tt/models/voucher.dart';
 import 'package:vtable/vtable.dart';
-
-import '../enums/main_account_enum.dart';
 
 class Category {
   int id;

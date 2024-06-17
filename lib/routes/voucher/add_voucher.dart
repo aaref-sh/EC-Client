@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tt/components/list_table.dart';
 import 'package:tt/components/modal_dialog.dart';
@@ -7,7 +6,6 @@ import 'package:searchfield/searchfield.dart';
 import 'package:tt/enums/server_enums.dart';
 import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
-import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/account.dart';
 import 'package:tt/models/voucher.dart';
 

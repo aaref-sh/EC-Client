@@ -47,7 +47,6 @@ class _AddRepositoryState extends State<AddRepository> {
                   if (response.statusCode == 200) {
                     nameController.text = '';
                     noteController.text = '';
-                    var cat = response.data;
                     hideLoadingPanel(context);
                     showErrorMessage(context, resDone);
                   }
