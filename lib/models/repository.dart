@@ -118,7 +118,6 @@ class _RepositoryEditDialogState extends State<RepositoryEditDialog> {
                 if (response.statusCode == 200) {
                   hideLoadingPanel(context);
                   Navigator.pop(context);
-                  Navigator.pop(context);
                   showErrorMessage(context, resDone);
                 }
               } catch (e) {
@@ -136,4 +135,7 @@ class RepositoryApiPagingRequest extends ApiRequest {
   String? name;
 
   RepositoryApiPagingRequest({this.name});
+
+  @override
+  Map<String, dynamic> toJson() => {'name': name};
 }

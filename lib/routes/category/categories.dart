@@ -1,14 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:tt/components/base_route.dart';
 import 'package:tt/components/dialog.dart';
 import 'package:tt/components/search_bar.dart';
 import 'package:tt/helpers/neteork_helper.dart';
 import 'package:tt/helpers/resources.dart';
-import 'package:tt/helpers/settings.dart';
 import 'package:tt/models/category.dart';
-import 'package:tt/models/repository.dart';
-import 'package:tt/models/voucher.dart';
 import 'package:tt/routes/category/add_category.dart';
 import 'package:vtable/vtable.dart';
 
@@ -66,7 +62,7 @@ class _CategoriesState extends State<Categories> {
   }
 
   Future<List<Category>> fetchRepositories(String s) async {
-    var header = RepositoryApiPagingRequest(name: s);
+    var header = ListCategoryRequest(name: s);
     return fetchFromServer(
         controller: 'Category', fromJson: Category.fromJson, headers: header);
   }

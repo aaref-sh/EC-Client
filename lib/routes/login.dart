@@ -89,6 +89,7 @@ class _LoginState extends State<Login> {
       });
       hideLoadingPanel(context);
       token = response.data['data']['token'];
+      name = response.data['data']['userName'];
       navigateTo(context,
           type: PushMethod.replacement,
           to: MaterialApp(

@@ -104,11 +104,21 @@ class CategoryEditDialog extends StatefulWidget {
 
 class _CategoryEditDialogState extends State<CategoryEditDialog> {
   late TextEditingController name;
-  late TextEditingController notes;
+
   var loading = false;
   int? baseCategoryId;
-  var isOrganizal = false;
   var suggestions = <Category>[];
+
+  @override
+  initState() {
+    super.initState();
+    name = TextEditingController(text: widget.item.name);
+    baseCategoryId = widget.item.baseCategoryId;
+
+    fetchFromServer(controller: 'Category', fromJson: Category.fromJson).then(
+        (v) => setState(() =>
+            suggestions = v.where((x) => x.id != widget.item.id).toList()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +153,7 @@ class _CategoryEditDialogState extends State<CategoryEditDialog> {
               widget.item.baseCategoryId = baseCategoryId;
               try {
                 showLoadingPanel(context);
-                var response = await sendPut('Account', widget.item);
+                var response = await sendPut('Category', widget.item);
                 if (response.statusCode == 200) {
                   hideLoadingPanel(context);
                   hideLoadingPanel(context);
@@ -171,14 +181,14 @@ class _CategoryEditDialogState extends State<CategoryEditDialog> {
   }
 }
 
-class ListCategoryRequest extends ApiPagingRequest {
+class ListCategoryRequest extends ApiRequest {
   String? name;
-  ListCategoryRequest(
-      {this.name, required super.pageNumber, required super.pageSize});
+  int? baseCategoryId;
+  ListCategoryRequest({this.name, this.baseCategoryId});
+  @override
   Map<String, dynamic> toJson() => {
         'name': name,
-        'pageNumber': pageNumber,
-        'pageSize': pageSize,
+        'baseCategoryId': baseCategoryId,
       };
 }
 

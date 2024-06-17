@@ -106,22 +106,20 @@ class Materiale {
   }
 }
 
-class MaterialApiPagingRequest extends ApiPagingRequest {
+class MaterialApiPagingRequest extends ApiRequest {
   String? name;
   String? code;
-  MaterialApiPagingRequest(
-      {this.code,
-      this.name,
-      required super.pageNumber,
-      required super.pageSize});
+  MaterialApiPagingRequest({
+    this.code,
+    this.name,
+  });
 
   // toJson method
+  @override
   Map<String, dynamic> toJson() {
     return {
       'code': code,
       'name': name,
-      'pageNumber': pageNumber,
-      'pageSize': pageSize,
     };
   }
 }
@@ -145,7 +143,7 @@ class PickMaterial {
   final int id;
   final String buyDate;
   final double amount;
-  final double price;
+  final double? unitPrice;
 
   PickMaterial({
     required this.materialId,
@@ -155,7 +153,7 @@ class PickMaterial {
     required this.id,
     required this.buyDate,
     required this.amount,
-    required this.price,
+    required this.unitPrice,
   });
 
   factory PickMaterial.fromJson(Map<String, dynamic> json) {
@@ -167,7 +165,7 @@ class PickMaterial {
       id: json['id'] as int,
       buyDate: json['buyDate'] as String,
       amount: json['amount'] as double,
-      price: json['price'] as double,
+      unitPrice: json['unitPrice'] as double?,
     );
   }
 

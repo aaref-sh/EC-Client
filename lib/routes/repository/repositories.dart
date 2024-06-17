@@ -53,8 +53,7 @@ class _RepositoriesState extends State<Repositories> {
         CustomSearchBar(
           controller: searchController,
           onSearchPressed: () {
-            // Define what should happen when the button is pressed
-            print('Search button was pressed!');
+            setState(() {});
           },
         )
       ],

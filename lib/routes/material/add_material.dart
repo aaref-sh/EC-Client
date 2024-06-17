@@ -104,7 +104,7 @@ class _AddMaterialState extends State<AddMaterial> {
       loading = true;
       suggestions = <Category>[];
     });
-    var header = ListCategoryRequest(name: query, pageNumber: 1, pageSize: 7);
+    var header = ListCategoryRequest(name: query);
     fetchFromServer(
             controller: "Category",
             fromJson: Category.fromJson,

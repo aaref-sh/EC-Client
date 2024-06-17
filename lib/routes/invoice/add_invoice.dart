@@ -76,7 +76,7 @@ class _AddInvoiceState extends State<AddInvoice> {
           width: (width * 4 / 12).round(),
           alignment: Alignment.center,
           transformFunction: (row) => row.materialName,
-          compareFunction: (a, b) => a.marerialName.compareTo(b.marerialName),
+          compareFunction: (a, b) => a.materialName.compareTo(b.materialName),
         ),
         VTableColumn(
           label: resQuantity,
@@ -129,11 +129,12 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
           hint: resMaterial,
           onSuggestionTap: (item) {
             material = item.item;
-            unitPriceController.text = (item.item?.price ?? 0).toString();
+            unitPriceController.text = (item.item?.unitPrice ?? 0).toString();
             totalPriceController.text = calculateTotalPrice().toString();
           },
           emptyWidget: autoCompshitEmptyWidget(loading),
           suggestions: getAccountSuggestions(),
+          itemHeight: 56,
         ),
         Row(
           children: [
@@ -203,13 +204,14 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
               if (material?.materialId == null) {}
               var item = Item(
                   amount: int.parse(quantityController.text),
-                  discount: double.parse(discountController.text),
+                  discount: double.tryParse(discountController.text) ?? 0,
                   unitPrice: double.parse(unitPriceController.text),
                   notes: notesController.text,
                   materialId: material!.materialId,
                   materialName: material!.materialName);
 
               newInvoice.items.add(item);
+              Navigator.pop(context);
             },
             child: Text(resAdd))
       ],
@@ -265,39 +267,43 @@ class CuteListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Colors.pink, // Choose a cute color!
-        child: Text(
-          material.materialName[0].toUpperCase(),
-          style: TextStyle(color: Colors.white),
+    return Column(
+      children: [
+        Row(
+          textDirection: TextDirection.rtl,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              material.materialName,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              (material.amount).toString(),
+              style: TextStyle(color: Colors.green, fontSize: 10),
+            )
+          ],
         ),
-      ),
-      title: Text(
-        material.materialName,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(material.buyDate),
-      trailing: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Repo: ${material.repositoryName}',
-            style: TextStyle(
-              fontStyle: FontStyle.italic,
-              color: Colors.grey,
+        Row(
+          textDirection: TextDirection.rtl,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              material.repositoryName,
+              style: TextStyle(
+                  fontWeight: FontWeight.w200,
+                  color: Colors.grey[800],
+                  fontSize: 11),
             ),
-          ),
-          gap(4),
-          Text(
-            '\$${material.amount}',
-            style: TextStyle(
-              color: Colors.green,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
+            Text(
+              material.buyDate.substring(2, 10).replaceAll('-', '/'),
+              style: TextStyle(
+                  fontWeight: FontWeight.w200,
+                  color: Colors.grey[800],
+                  fontSize: 11),
+            )
+          ],
+        )
+      ],
     );
   }
 }

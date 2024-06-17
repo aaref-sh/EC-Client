@@ -27,7 +27,7 @@ class _MaterialsState extends State<Materials> {
           future: fetchFromServer(
               controller: "Material",
               fromJson: Materiale.fromJson,
-              headers: MaterialApiPagingRequest(pageNumber: 1, pageSize: 10)),
+              headers: MaterialApiPagingRequest(name: searchController.text)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return createTable(snapshot.data!);
@@ -53,8 +53,7 @@ class _MaterialsState extends State<Materials> {
         CustomSearchBar(
           controller: searchController,
           onSearchPressed: () {
-            // Define what should happen when the button is pressed
-            print('Search button was pressed!');
+            setState(() {});
           },
         )
       ],

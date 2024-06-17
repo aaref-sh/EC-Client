@@ -83,7 +83,7 @@ class _AddCategoryState extends State<AddCategory> {
       suggestions = <Category>[];
     });
     var dio = Dio();
-    var header = ListCategoryRequest(name: query, pageNumber: 1, pageSize: 20);
+    var header = ListCategoryRequest(name: query);
     dio
         .get(
       "${host}Category/List",

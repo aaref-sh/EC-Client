@@ -169,7 +169,9 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
                       width: 80,
                       child: TextField(
                         controller: discountController,
-                        onChanged: (x) => setState(() {}),
+                        onChanged: (x) => setState(() {
+                          newInvoice.discount = double.parse(x);
+                        }),
                         keyboardType: TextInputType.number,
                       ),
                     )
@@ -195,6 +197,7 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
       var response =
           await sendPost("Invoice", newInvoice, action: "CreatePurchase");
       if (response.statusCode == 200) {
+        hideLoadingPanel(context);
         showErrorMessage(context, resDone);
       }
     } catch (e) {
@@ -479,9 +482,6 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
               }
 
               hideLoadingPanel(context);
-              // show snackBar
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(resDone)));
             },
             child: Text(item == null ? resAdd : resSave))
       ],
@@ -508,8 +508,7 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
       fetchFromServer(
               controller: "Material",
               fromJson: Materiale.fromJson,
-              headers: MaterialApiPagingRequest(
-                  name: query, pageNumber: 1, pageSize: 10))
+              headers: MaterialApiPagingRequest(name: query))
           .then((value) {
         suggestions = value;
         setState(() => loading = false);
