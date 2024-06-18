@@ -87,12 +87,14 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
               children: [
                 Expanded(
                   child: SearchField(
-                    searchInputDecoration: InputDecoration(labelText: resFund),
+                    searchInputDecoration:
+                        const InputDecoration(labelText: resFund),
                     suggestions: funds
                         .map((e) => SearchFieldListItem(e.name, item: e))
                         .toList(),
                     onSearchTextChanged: (s) {
                       newInvoice.cashAccountId = 0;
+                      return null;
                     },
                     onSuggestionTap: (e) {
                       newInvoice.cashAccountId = e.item!.id;
@@ -113,7 +115,7 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
                       newInvoice.clientAccountId = e.item!.id;
                     },
                     searchInputDecoration:
-                        InputDecoration(labelText: resAccount),
+                        const InputDecoration(labelText: resAccount),
                     suggestions: debits
                         .map((e) => SearchFieldListItem(e.name, item: e))
                         .toList(),
@@ -132,7 +134,8 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
                     onSuggestionTap: (e) {
                       newInvoice.repositoryId = e.item!.id;
                     },
-                    searchInputDecoration: InputDecoration(labelText: resRepo),
+                    searchInputDecoration:
+                        const InputDecoration(labelText: resRepo),
                     suggestions: repos
                         .map((e) => SearchFieldListItem(e.name, item: e))
                         .toList(),
@@ -150,7 +153,7 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
               children: [
                 Row(
                   children: [
-                    Text(resCashe),
+                    const Text(resCashe),
                     Checkbox(
                         value: newInvoice.payType == PayType.direct,
                         onChanged: (v) {
@@ -163,7 +166,7 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
                 ),
                 Row(
                   children: [
-                    Text('الحسم:'),
+                    const Text('الحسم:'),
                     gap(2),
                     Container(
                       width: 80,
@@ -182,7 +185,7 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
                         (int.tryParse(discountController.text) ?? 0))
                     .toString()),
                 ElevatedButton(
-                    onPressed: addNewBuyInvoice, child: Text(resSave))
+                    onPressed: addNewBuyInvoice, child: const Text(resSave))
               ],
             ),
           )
@@ -212,9 +215,9 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
       actions: [
         IconButton(
             onPressed: () {
-              showDialogBox(context, AddInvoiceItem());
+              showDialogBox(context, const AddInvoiceItem());
             },
-            icon: Icon(Icons.add))
+            icon: const Icon(Icons.add))
       ],
       filterWidgets: [],
       showToolbar: true,
@@ -261,7 +264,7 @@ class _AddBuyInvoiceState extends State<AddBuyInvoice> {
                 onTap: () {
                   showBottomSheet(object);
                 },
-                child: Icon(Icons.more_vert));
+                child: const Icon(Icons.more_vert));
           },
         ),
       ],
@@ -368,7 +371,7 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
       children: [
         SearchField(
           controller: searchController,
-          searchInputDecoration: InputDecoration(labelText: resMaterial),
+          searchInputDecoration: const InputDecoration(labelText: resMaterial),
           onSearchTextChanged: onSearchTextChanged,
           onSuggestionTap: (item) {
             setState(() => material = item.item);
@@ -379,7 +382,7 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
           suggestions: getAccountSuggestions(),
         ),
         AnimatedSwitcher(
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
           transitionBuilder: (Widget child, Animation<double> animation) {
             return SizeTransition(
               sizeFactor: animation,
@@ -389,7 +392,7 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
           },
           child: showCategoryField
               ? TextField(
-                  decoration: InputDecoration(labelText: resCategory),
+                  decoration: const InputDecoration(labelText: resCategory),
                   controller: categoryController,
                 )
               : Container(),
@@ -402,7 +405,7 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
                 onChanged: (value) {
                   totalPriceController.text = calculateTotalPrice().toString();
                 },
-                decoration: InputDecoration(labelText: resQuantity),
+                decoration: const InputDecoration(labelText: resQuantity),
                 controller: quantityController,
               ),
             ),
@@ -413,7 +416,7 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
                 onChanged: (value) {
                   totalPriceController.text = calculateTotalPrice().toString();
                 },
-                decoration: InputDecoration(labelText: resPrice),
+                decoration: const InputDecoration(labelText: resPrice),
                 controller: unitPriceController,
               ),
             ),
@@ -421,11 +424,11 @@ class _AddInvoiceItemState extends State<AddInvoiceItem> {
         ),
         TextField(
           enabled: false,
-          decoration: InputDecoration(labelText: resTotalPrice),
+          decoration: const InputDecoration(labelText: resTotalPrice),
           controller: totalPriceController,
         ),
         TextField(
-          decoration: InputDecoration(labelText: resNotes),
+          decoration: const InputDecoration(labelText: resNotes),
           controller: notesController,
         ),
         gap(5),
